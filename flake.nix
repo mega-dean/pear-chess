@@ -58,6 +58,7 @@
                 [
                   env
                   bundixcli
+                  pkgs.postgresql_16
                 ];
             };
           };
