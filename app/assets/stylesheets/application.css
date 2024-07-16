@@ -13,3 +13,11 @@
  *= require_tree .
  *= require_self
  */
+
+.flash.success {
+    color: green;
+}
+
+.flash.error {
+    color: red;
+}

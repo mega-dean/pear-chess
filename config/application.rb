@@ -40,3 +40,6 @@ module PearChess
     config.generators.system_tests = nil
   end
 end
+
+require "pry"
+Rails.application.config.console = Pry
