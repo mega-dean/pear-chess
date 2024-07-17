@@ -14,10 +14,71 @@
  *= require_self
  */
 
-.flash.success {
-    color: green;
+html {
+    background: #888;
 }
 
-.flash.error {
-    color: red;
+#header {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #999;
+    border-bottom: 1px solid black;
+    box-shadow: 0 0.5rem 1rem black;
+    padding: 0.5rem 1rem;
+    z-index: 10;
+    box-sizing: border-box;
+    height: 6rem;
+}
+
+#content-container {
+    margin-top: 6rem;
+    padding: 1rem;
+    margin-left: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flash {
+    text-align: center;
+    width: 60%;
+    padding: 1rem;
+    margin: auto;
+}
+
+.text-field, .password-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.submit-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.submit-field input {
+    margin: 1rem;
+}
+
+.other-links {
+    font-size: 0.8rem;
+}
+
+.flash.success {
+    border: 1px solid green;
+    color: rgb(0, 80, 0);
+    background: rgb(220, 255, 220);
+}
+
+.flash.alert {
+    border: 1px solid red;
+    color: rgb(120, 0, 0);
+    background: rgb(255, 220, 220);
 }
