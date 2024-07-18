@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PearChess</title>
+    <title>Pear Chess</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,20 +11,26 @@
 
   <body>
     <div id="header">
-      <% if signed_in? %>
-        Signed in as: <%= current_user.username %>
-        <%= button_to(t('.sign_out'), sign_out_path, { method: :delete }) %>
-      <% else %>
-        <% if !@signing_in %>
-          <%= link_to(t('.sign_in'), sign_in_path) %>
+      <div id="logo">
+        <%= link_to(image_tag("logo"), "/") %>
+      </div>
+
+      <div id="login-status">
+        <% if signed_in? %>
+          Signed in as: <%= current_user.username %>
+          <%= button_to(t('.header.sign_out'), sign_out_path, { method: :delete }) %>
+        <% else %>
+          <% if !@signing_in %>
+            <%= link_to(t('.header.sign_in'), sign_in_path) %>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
 
     <div id="content-container">
       <div id="flash">
         <% flash.each do |type, message_key| %>
-          <div class="flash <%= type %>"><%= t(".great_job") %></div>
+          <div class="flash <%= type %>"><%= t(".#{message_key}") %></div>
         <% end %>
       </div>
 

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root "games#homepage"
 
   resources :passwords, controller: "clearance/passwords", only: [:create, :new]
-  resource :session, controller: "clearance/sessions", only: [:create]
+  resource :session, controller: "sessions", only: [:create]
 
   resources :users, only: [:create] do
     resource :password,
