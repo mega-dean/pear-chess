@@ -29,8 +29,14 @@
 
     <div id="content-container">
       <div id="flash">
-        <% flash.each do |type, message_key| %>
-          <div class="flash <%= type %>"><%= t(".#{message_key}") %></div>
+        <% flash.each do |type, message| %>
+          <div class="flash <%= type %>">
+            <% if message.start_with?("flash.") %>
+              <%= t(".#{message}") %>
+            <% else %>
+              <%= message %>
+            <% end %>
+          </div>
         <% end %>
       </div>
 

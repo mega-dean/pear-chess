@@ -1,7 +1,7 @@
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
+# Be aware that YAML interprets the following case-insensitive strings as booleans:
+# `true`, `false`, `on`, `off`, `yes`, `no`, `y`, `n`
 #
+# Therefore, these strings must be quoted to be interpreted as strings. For example:
 #     en:
 #       "yes": yup
 #       enabled: "ON"
@@ -9,5 +9,7 @@
 en:
   layouts:
     application:
-  games:
-    homepage:
+      flash:
+        user_create_failure: Could not create user.
+        incorrect_password: Incorrect password.
+  username_not_found: There is no user with username '%{username}'.

@@ -42,8 +42,6 @@ en:
       header:
         sign_in: Sign in
         sign_out: Sign out
-      flash:
-        session_create_failure: Invalid username or password.
   passwords:
     create:
       description: You will receive an email within the next few minutes. It
