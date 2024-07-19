@@ -10,9 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_16_162219) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_020801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "games", force: :cascade do |t|
+    t.bigint "white_player_1_id"
+    t.bigint "black_player_1_id"
+    t.bigint "white_player_2_id"
+    t.bigint "black_player_2_id"
+    t.integer "turn_duration"
+    t.integer "current_turn"
+    t.integer "board_size"
+    t.boolean "processing_moves"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "moves", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "game_id"
+    t.integer "turn"
+    t.integer "src_square"
+    t.integer "dest_square"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_moves_on_game_id"
+    t.index ["user_id"], name: "index_moves_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
