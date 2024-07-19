@@ -11,7 +11,7 @@ RSpec.describe("Sessions", type: :request) do
         session: {
           username: "username",
           password: "password",
-        }
+        },
       }
 
       post session_path(params)
@@ -24,7 +24,7 @@ RSpec.describe("Sessions", type: :request) do
         session: {
           username: "no",
           password: "password",
-        }
+        },
       }
 
       post session_path(params)
