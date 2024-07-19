@@ -238,3 +238,11 @@ Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 Style/Documentation:
   Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/HashEachMethods:
+  Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
+Style/HashSyntax:
+  Enabled: false

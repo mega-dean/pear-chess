@@ -1,24 +1,22 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## About
 
-Things you may want to cover:
+Multiplayer chess
 
-* Ruby version
+## Development
 
-* System dependencies
+### Setup
 
-* Configuration
+- Install [nix](https://nix.dev/install-nix#install-nix).
+- Enable flakes by adding `experimental-features = nix-command flakes` to `nix.conf` (either `~/.config/nix/nix.conf` or `/etc/nix/nix.conf`).
+- Run `nix develop` to open a development shell.
+  - Run `nix develop -c zsh` for zsh.
+  - Run `nix develop -c kitten run-shell --shell=zsh` for kitty's shell integration to work.
 
-* Database creation
+### Add a new gem
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Run `bundle add gem_name --skip-install` to add gem to `Gemfile`.
+- Run `bundle lock` to update the `Gemfile.lock` to include the new gem.
+- Run `bundix` to generate a new `gemset.nix` from the updated `Gemfile.lock`.
+- Exit the dev shell and re-enter using `nix develop` to install the new dependencies in `gemset.nix`.

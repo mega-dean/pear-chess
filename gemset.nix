@@ -422,6 +422,32 @@
     targets = [];
     version = "1.13.0";
   };
+  factory_bot = {
+    dependencies = ["activesupport"];
+    groups = ["test"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "013f3akjgyz99k6jpkvf6a7s4rc2ba44p07mv10df66kk378d50s";
+      target = "ruby";
+      type = "gem";
+    };
+    targets = [];
+    version = "6.4.6";
+  };
+  factory_bot_rails = {
+    dependencies = ["factory_bot" "railties"];
+    groups = ["development" "test"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1j6w4rr2cb5wng9yrn2ya9k40q52m0pbz47kzw8xrwqg3jncwwza";
+      target = "ruby";
+      type = "gem";
+    };
+    targets = [];
+    version = "6.4.3";
+  };
   ffi = {
     groups = ["default"];
     platforms = [];
