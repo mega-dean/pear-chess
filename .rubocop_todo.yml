@@ -109,24 +109,6 @@ Style/CommentAnnotation:
   Exclude:
     - 'app/models/game.rb'
 
-# Offense count: 11
-# Configuration parameters: AllowedConstants.
-Style/Documentation:
-  Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'app/controllers/sessions_controller.rb'
-    - 'app/controllers/users_controller.rb'
-    - 'app/helpers/application_helper.rb'
-    - 'app/models/application_record.rb'
-    - 'app/models/game.rb'
-    - 'app/models/move.rb'
-    - 'app/models/user.rb'
-    - 'config/application.rb'
-    - 'db/migrate/20240716162219_create_users.rb'
-    - 'db/migrate/20240719020752_create_games.rb'
-    - 'db/migrate/20240719020801_create_moves.rb'
-
 # Offense count: 43
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle.

@@ -10,15 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_19_020801) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_174419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
-    t.bigint "white_player_1_id"
-    t.bigint "black_player_1_id"
-    t.bigint "white_player_2_id"
-    t.bigint "black_player_2_id"
     t.integer "turn_duration"
     t.integer "current_turn"
     t.integer "board_size"
@@ -39,6 +35,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_020801) do
     t.index ["user_id"], name: "index_moves_on_user_id"
   end
 
+  create_table "pairs", force: :cascade do |t|
+    t.bigint "white_player_id"
+    t.bigint "black_player_id"
+    t.bigint "game_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["black_player_id"], name: "index_pairs_on_black_player_id"
+    t.index ["game_id"], name: "index_pairs_on_game_id"
+    t.index ["white_player_id"], name: "index_pairs_on_white_player_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -52,4 +59,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_020801) do
     t.index ["remember_token"], name: "index_users_on_remember_token", unique: true
   end
 
+  add_foreign_key "pairs", "users", column: "black_player_id"
+  add_foreign_key "pairs", "users", column: "white_player_id"
 end
