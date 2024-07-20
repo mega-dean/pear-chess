@@ -1,24 +1,46 @@
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
-<p>welcome <%= current_user&.username %></p>
+<h2><%= t(".title") %></h2>
+
+<div id="play-game">
+  <div id="create-new-game">
+    <%= form_with(url: games_path, method: :post) do |form| %>
+      <div>
+        <div>
+          <%= form.radio_button(:number_of_players, 2) %>
+          <%= form.label(:number_of_players_2, "2 players") %>
+          <%= form.radio_button(:number_of_players, 4) %>
+          <%= form.label(:number_of_players_4, "4 players") %>
+        </div>
+
+        <div>
+          <%= form.radio_button(:board_size, 8) %>
+          <%= form.label(:board_size_8, "8x8") %>
+          <%= form.radio_button(:board_size, 10) %>
+          <%= form.label(:board_size_10, "10x10") %>
+          <%= form.radio_button(:board_size, 12) %>
+          <%= form.label(:board_size_12, "12x12") %>
+        </div>
+
+        <div>
+          <%= form.radio_button(:turn_duration, 5) %>
+          <%= form.label(:turn_duration_5, "5 seconds") %>
+          <%= form.radio_button(:turn_duration, 10) %>
+          <%= form.label(:turn_duration_10, "10 seconds") %>
+          <%= form.radio_button(:turn_duration, 15) %>
+          <%= form.label(:turn_duration_15, "15 seconds") %>
+        </div>
+      </div>
+
+      <div class="submit-field">
+        <%= form.submit "Start New Game" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="existing-games">
+    <ul>
+      <% @games.each do |game| %>
+        <li><%= "#{game.id} - #{game.board_size}x#{game.board_size} (#{game.turn_duration} seconds)" %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

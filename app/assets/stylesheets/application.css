@@ -44,6 +44,12 @@ html {
     align-items: center;
 }
 
+#play-game {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
 #flash {
     width: 60%;
     text-align: center;

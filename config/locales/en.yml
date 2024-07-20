@@ -13,3 +13,6 @@ en:
         user_create_failure: Could not create user.
         incorrect_password: Incorrect password.
   username_not_found: There is no user with username '%{username}'.
+  games:
+    homepage:
+      title: Welcome to Pear Chess!
