@@ -1,10 +1,10 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe("Sessions", type: :request) do
   context "logging in" do
-    let!(:user) {
+    let!(:user) do
       User.create!(username: "username", email: "email@example.com", password: "password")
-    }
+    end
 
     it "creates a session when params are valid" do
       params = {

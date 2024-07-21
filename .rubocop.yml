@@ -23,6 +23,8 @@ Layout/LineEndStringConcatenationIndentation:
   Enabled: true
 Layout/SpaceBeforeBrackets:
   Enabled: true
+Layout/MultilineAssignmentLayout:
+  EnforcedStyle: same_line
 
 Lint/AmbiguousAssignment:
   Enabled: true
@@ -246,3 +248,9 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/HashSyntax:
   Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/NumericPredicate:
+  Enabled: false
+Style/CommentAnnotation:
+  Keywords: [FIXME, CLEANUP, TODO]

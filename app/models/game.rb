@@ -14,16 +14,15 @@ class Game < ApplicationRecord
 
       pair_count.times do |idx|
         pair_params = if idx == 0
-          creator_color = if game_params[:play_as] == "random"
-            ["white", "black"].sample
-          else
-            game_params[:play_as]
-          end
-
-          { "#{creator_color}_player_id" => creator.id }
-        else
-          {}
-        end
+                        creator_color = if game_params[:play_as] == RANDOM
+                                          [WHITE, BLACK].sample
+                                        else
+                                          game_params[:play_as]
+                                        end
+                        { "#{creator_color}_player_id" => creator.id }
+                      else
+                        {}
+                      end
 
         game.pairs.create!(pair_params)
       end
@@ -36,7 +35,7 @@ class Game < ApplicationRecord
         number_of_players: [2, 4],
         board_size: [8, 10, 12],
         turn_duration: [5, 10, 15],
-        play_as: ["black", "white", "random"],
+        play_as: [WHITE, BLACK, RANDOM],
       }
     end
   end
