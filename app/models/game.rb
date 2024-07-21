@@ -4,7 +4,7 @@ class Game < ApplicationRecord
   validates :current_turn, presence: true
   validate :pairs_have_unique_players
 
-  has_many :pairs
+  has_many :pairs, dependent: :destroy
 
   attribute :current_turn, default: 0
 
