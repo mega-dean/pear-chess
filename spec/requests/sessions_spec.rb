@@ -2,9 +2,9 @@ require "rails_helper"
 
 RSpec.describe("Sessions", type: :request) do
   context "logging in" do
-    let!(:user) do
+    let!(:user) {
       User.create!(username: "username", email: "email@example.com", password: "password")
-    end
+    }
 
     it "creates a session when params are valid" do
       params = {

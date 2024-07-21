@@ -1,8 +1,7 @@
 class GamesController < ApplicationController
   def create
     if params_valid?
-      pair_count = game_params[:number_of_players].to_i / 2
-      @game = Game.make(pair_count: pair_count, creator: current_user, game_params: game_params)
+      @game = Game.make(creator: current_user, game_params: game_params)
       redirect_to(game_path(@game))
     else
       flash[:alert] = "flash.game_create_failure"

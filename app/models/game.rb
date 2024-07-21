@@ -9,9 +9,10 @@ class Game < ApplicationRecord
   attribute :current_turn, default: 0
 
   class << self
-    def make(pair_count:, creator:, game_params:)
+    def make(creator:, game_params:)
       game = Game.create!(game_params.slice(:board_size, :turn_duration))
 
+      pair_count = game_params[:number_of_players].to_i / 2
       pair_count.times do |idx|
         pair_params = if idx == 0
                         creator_color = if game_params[:play_as] == RANDOM

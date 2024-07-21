@@ -22,13 +22,13 @@ RSpec.describe Game, type: :model do
     describe "pairs" do
       let(:game) { FactoryBot.create(:game) }
 
-      let!(:pairs) do
+      let!(:pairs) {
         5.times do
           FactoryBot.create(:pair, game: game)
         end
 
         game.reload.pairs
-      end
+      }
 
       it "is valid when pairs all have unique player ids" do
         expect(game.valid?).to be(true)
@@ -39,6 +39,39 @@ RSpec.describe Game, type: :model do
 
         expect(game.valid?).to be(false)
       end
+    end
+  end
+
+  describe "make" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:params) {
+      {
+        number_of_players: 4,
+        board_size: 8,
+        turn_duration: 15,
+        play_as: BLACK,
+      }
+    }
+
+    let(:game) {
+      Game.make(creator: user, game_params: params)
+    }
+
+    it "creates a game with the given params" do
+      expect(game.board_size).to eq(params[:board_size])
+      expect(game.turn_duration).to eq(params[:turn_duration])
+    end
+
+    it "creates pairs" do
+      expect(game.pairs.count).to be(2)
+    end
+
+    it "sets the creator to one of the pair players" do
+      expect(game.pairs.first.black_player_id).to be(user.id)
+      expect(game.pairs.first.white_player_id).to be(nil)
+
+      expect(game.pairs.last.black_player_id).to be(nil)
+      expect(game.pairs.last.white_player_id).to be(nil)
     end
   end
 end
