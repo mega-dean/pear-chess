@@ -11,6 +11,7 @@ en:
     application:
       flash:
         user_create_failure: Could not create user.
+        game_create_failure: Could not create this game - please try again.
         incorrect_password: Incorrect password.
   username_not_found: There is no user with username '%{username}'.
   games:

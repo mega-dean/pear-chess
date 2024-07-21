@@ -2,31 +2,38 @@
 
 <div id="play-game">
   <div id="create-new-game">
-    <%= form_with(url: games_path, method: :post) do |form| %>
+    <%= form_with(model: Game.new) do |form| %>
       <div>
         <div>
-          <%= form.radio_button(:number_of_players, 2) %>
-          <%= form.label(:number_of_players_2, "2 players") %>
-          <%= form.radio_button(:number_of_players, 4) %>
-          <%= form.label(:number_of_players_4, "4 players") %>
+          <div>Number of players:</div>
+          <% Game.valid_form_options[:number_of_players].each do |number| %>
+            <%= form.radio_button(:number_of_players, number) %>
+            <%= form.label(:"number_of_players_#{number}", "#{number} players") %>
+          <% end %>
         </div>
 
         <div>
-          <%= form.radio_button(:board_size, 8) %>
-          <%= form.label(:board_size_8, "8x8") %>
-          <%= form.radio_button(:board_size, 10) %>
-          <%= form.label(:board_size_10, "10x10") %>
-          <%= form.radio_button(:board_size, 12) %>
-          <%= form.label(:board_size_12, "12x12") %>
+          <div>Board size:</div>
+          <% Game.valid_form_options[:board_size].each do |size| %>
+            <%= form.radio_button(:board_size, size) %>
+            <%= form.label(:"board_size_#{size}", "#{size}x#{size}") %>
+          <% end %>
         </div>
 
         <div>
-          <%= form.radio_button(:turn_duration, 5) %>
-          <%= form.label(:turn_duration_5, "5 seconds") %>
-          <%= form.radio_button(:turn_duration, 10) %>
-          <%= form.label(:turn_duration_10, "10 seconds") %>
-          <%= form.radio_button(:turn_duration, 15) %>
-          <%= form.label(:turn_duration_15, "15 seconds") %>
+          <div>Turn duration:</div>
+          <% Game.valid_form_options[:turn_duration].each do |duration| %>
+            <%= form.radio_button(:turn_duration, duration) %>
+            <%= form.label(:"turn_duration_#{duration}", "#{duration} seconds") %>
+          <% end %>
+        </div>
+
+        <div>
+          <div>Play as:</div>
+          <% Game.valid_form_options[:play_as].each do |color| %>
+            <%= form.radio_button(:play_as, color) %>
+            <%= form.label(:"play_as_#{color}", color) %>
+          <% end %>
         </div>
       </div>
 

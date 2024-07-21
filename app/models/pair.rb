@@ -1,8 +1,10 @@
 class Pair < ApplicationRecord
   validate :players_are_different
 
-  belongs_to :white_player, class_name: "User"
-  belongs_to :black_player, class_name: "User"
+  # These are optional because a Game will be created with empty pairs, which will be populated when players join the
+  # game.
+  belongs_to :white_player, class_name: "User", optional: true
+  belongs_to :black_player, class_name: "User", optional: true
 
   belongs_to :game
 

@@ -8,6 +8,39 @@ class Game < ApplicationRecord
 
   attribute :current_turn, default: 0
 
+  class << self
+    def make(pair_count:, creator:, game_params:)
+      game = Game.create!(game_params.slice(:board_size, :turn_duration))
+
+      pair_count.times do |idx|
+        pair_params = if idx == 0
+          creator_color = if game_params[:play_as] == "random"
+            ["white", "black"].sample
+          else
+            game_params[:play_as]
+          end
+
+          { "#{creator_color}_player_id" => creator.id }
+        else
+          {}
+        end
+
+        game.pairs.create!(pair_params)
+      end
+
+      game
+    end
+
+    def valid_form_options
+      {
+        number_of_players: [2, 4],
+        board_size: [8, 10, 12],
+        turn_duration: [5, 10, 15],
+        play_as: ["black", "white", "random"],
+      }
+    end
+  end
+
   private
 
   def pairs_have_unique_players
