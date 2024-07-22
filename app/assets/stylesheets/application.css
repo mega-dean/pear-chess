@@ -18,6 +18,10 @@ html {
     background: #888;
 }
 
+#app {
+    display: none;
+}
+
 #header {
     display: flex;
     justify-content: space-between;
