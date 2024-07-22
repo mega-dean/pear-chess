@@ -41,6 +41,37 @@ class Game < ApplicationRecord
     end
   end
 
+  def initial_pieces
+    {
+      8 => ["KRN2nrk",
+            "BBN2nbb",
+            "NNN2nnn",
+            "8",
+            "8",
+            "NNN2nnn",
+            "BBN2nbb",
+            "KRN2nrk",
+           ].join("/"),
+      10 => ["KRQN2nqrk",
+             "BRN4nrb",
+             # "BNN2nnn",
+             # "8",
+             # "8",
+             # "NNN2nnn",
+             # "BBN2nbb",
+             # "KRN2nrk",
+            ].join("/"),
+      12 => "",
+    }[self.board_size]
+  end
+
+  def start
+    self.update!(
+      current_turn: 1,
+      pieces: self.initial_pieces
+    )
+  end
+
   private
 
   def pairs_have_unique_players

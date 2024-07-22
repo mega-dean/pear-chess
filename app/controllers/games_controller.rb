@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   def create
-    if params_valid?
+    if params[:game] && params_valid?
       @game = Game.make(creator: current_user, game_params: game_params)
       redirect_to(game_path(@game))
     else

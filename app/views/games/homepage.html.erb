@@ -46,7 +46,7 @@
   <div id="existing-games">
     <ul>
       <% @games.each do |game| %>
-        <li><%= "#{game.id} - #{game.board_size}x#{game.board_size} (#{game.turn_duration} seconds)" %></li>
+        <li><%= "#{game.pairs.count * 2} players, #{game.board_size}x#{game.board_size}, #{game.turn_duration} seconds" %></li>
       <% end %>
     </ul>
   </div>

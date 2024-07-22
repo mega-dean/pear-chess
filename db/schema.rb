@@ -18,6 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_174419) do
     t.integer "turn_duration"
     t.integer "current_turn"
     t.integer "board_size"
+    t.string "pieces"
     t.boolean "processing_moves"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
