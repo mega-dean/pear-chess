@@ -1,0 +1,22 @@
+.text-field, .password-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.submit-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.submit-field input {
+    margin: 1rem;
+}
+
+.other-links {
+    font-size: 0.8rem;
+}
+
+

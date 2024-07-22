@@ -22,6 +22,11 @@ class GamesController < ApplicationController
     @games = Game.all
   end
 
+  if Rails.env.development?
+    def scratch_board
+    end
+  end
+
   private
 
   def game_params

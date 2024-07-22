@@ -1,0 +1,56 @@
+#play-game {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* FIXME this can probably be an id, since there should only be one board per page */
+#board {
+    display: grid;
+    grid-auto-columns: 2rem;
+    grid-auto-rows: 2rem;
+
+    /* position: relative; */
+}
+
+#scratch-container {
+    display: flex;
+}
+
+.board-8 {
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.board-10 {
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+}
+
+.board-12 {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+}
+
+.piece-container {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    transition: transform 0.25s ease;
+    z-index: 2;
+}
+
+.square {
+    height: 4rem;
+    width: 4rem;
+    display: inline-block;
+}
+
+.square.dark {
+    background: #444;
+}
+
+.square.light {
+    background: #eee;
+}
+
