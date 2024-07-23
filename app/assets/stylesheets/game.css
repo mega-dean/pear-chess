@@ -10,10 +10,10 @@
     grid-auto-columns: 2rem;
     grid-auto-rows: 2rem;
 
-    /* position: relative; */
+    height: 100%;
 }
 
-#scratch-container {
+#fen-tool-board {
     display: flex;
 }
 
@@ -32,14 +32,6 @@
     grid-template-rows: repeat(12, 1fr);
 }
 
-.piece-container {
-    position: absolute;
-    width: 4rem;
-    height: 4rem;
-    transition: transform 0.25s ease;
-    z-index: 2;
-}
-
 .square {
     height: 4rem;
     width: 4rem;
@@ -54,3 +46,16 @@
     background: #eee;
 }
 
+.piece-control {
+    width: 4rem;
+    height: 4rem;
+
+    background: #bbb;
+    box-shadow: inset -2px -2px #222, inset 2px 2px #eee;
+    margin: 0.6rem;
+    /* width: 100%; */
+}
+
+img.piece {
+    max-width: 100%;
+}

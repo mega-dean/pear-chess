@@ -1,0 +1,49 @@
+<div id="fen-tool-container"
+     data-controller="fen-tool"
+>
+  <div id="fen-tool-board">
+    <% board_size = fen.rows.length %>
+
+    <div id="board" class="board-<%= board_size %>">
+      <% board_size.times do |y| %>
+        <% board_size.times do |x| %>
+          <% span_class = "#{y%2 == x%2 ? 'light' : 'dark'}" %>
+          <span class="square <%= span_class %>"
+                data-action="click->fen-tool#selectSquare"
+                data-square="<%= (y * board_size) + x %>"
+          >
+            <% color, piece_kind = fen.piece_at((y * board_size) + x) %>
+            <% if color %>
+              <%= image_tag("#{color}-#{piece_kind}.png", class: "piece") %>
+            <% end %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div id="piece-controls">
+      <% [WHITE, BLACK].each do |color| %>
+        <% [KNIGHT, BISHOP, ROOK, QUEEN, KING].each do |piece_kind| %>
+          <div class="piece-control"
+               data-action="click->fen-tool#selectPiece"
+               data-color="<%= color %>"
+               data-piece-kind="<%= piece_kind %>"
+          >
+            <%= image_tag("#{color}-#{piece_kind}.png",
+                          class: "piece",
+                          data: {
+                            color: color,
+                            piece_kind: piece_kind,
+                          },
+            ) %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div id="fen">
+    <%= fen&.to_s %>
+  </div>
+</div>
+

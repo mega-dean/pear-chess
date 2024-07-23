@@ -256,4 +256,4 @@ Style/CommentAnnotation:
   Keywords: [FIXME, CLEANUP, TODO]
 Style/BlockDelimiters:
   # This can also work with `EnforcedStyle: semantic`, but that has some other weird effects.
-  AllowedPatterns: ["let"]
+  AllowedPatterns: ["let", "expect"]

@@ -3,14 +3,32 @@ class Fen
 
   def initialize(size)
     self.size = size
-    self.rows = Array.new(size, size.to_s)
+    self.rows = Array.new(size, size.to_s(16))
+  end
+
+  def self.from_s(s)
+    rows = s.split("/")
+    size = rows.length
+
+    fen = new(size)
+    fen.rows = rows
+    fen
+  end
+
+  # Returns [color, piece_kind]
+  def piece_at(square)
+    target_row = square / self.size
+    target_col = square % self.size
+
+    squares = self.row_to_squares(self.rows[target_row])
+    self.get_piece(squares[target_col])
   end
 
   def add_piece(color, piece_kind, square)
     new_value = begin
       char = {
         KNIGHT => "n",
-        BISHOP => "b",
+        BISHOP => "p",
         ROOK => "r",
         QUEEN => "q",
         KING => "k",
@@ -35,6 +53,21 @@ class Fen
 
   private
 
+  def get_piece(char)
+    {
+      "N" => [WHITE, KNIGHT],
+      "P" => [WHITE, BISHOP],
+      "R" => [WHITE, ROOK],
+      "Q" => [WHITE, QUEEN],
+      "K" => [WHITE, KING],
+      "n" => [BLACK, KNIGHT],
+      "p" => [BLACK, BISHOP],
+      "r" => [BLACK, ROOK],
+      "q" => [BLACK, QUEEN],
+      "k" => [BLACK, KING],
+    }[char]
+  end
+
   def change_square(square, new_value)
     target_row = square / self.size
     target_col = square % self.size
@@ -48,8 +81,8 @@ class Fen
     squares = Array.new(self.size, nil)
     current = 0
     row.split("").each do |char|
-      if char.to_i > 0
-        current += char.to_i
+      if char.to_i(16) > 0
+        current += char.to_i(16)
       else
         squares[current] = char
         current += 1
@@ -67,7 +100,7 @@ class Fen
         current_empty_squares += 1
       else
         if current_empty_squares > 0
-          row << "#{current_empty_squares}#{square}"
+          row << "#{current_empty_squares.to_s(16)}#{square}"
         else
           row << "#{square}"
         end
@@ -76,7 +109,7 @@ class Fen
     end
 
     if current_empty_squares > 0
-      row << "#{current_empty_squares}"
+      row << current_empty_squares.to_s(16)
     end
 
     row

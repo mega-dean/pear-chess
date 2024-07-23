@@ -17,7 +17,8 @@ Rails.application.routes.draw do
   resources :games, only: [:show, :create]
 
   if Rails.env.development?
-    get "/scratch" => "games#scratch_board"
+    get "/fen_tool" => "games#fen_tool_board"
+    post "/fen_tool_update" => "games#fen_tool_update"
   end
 
   get "/sign_in" => "sessions#new", as: "sign_in"

@@ -1,17 +1,38 @@
 require "rails_helper"
 
-RSpec.fdescribe Fen do
+RSpec.describe Fen do
   let(:fen) { Fen.new(8) }
-  let(:fen12) { Fen.new(12) }
 
   it "is created with an empty board" do
     expect(fen.rows.length).to eq(8)
     expect(fen.rows.first).to eq("8")
     expect(fen.to_s).to eq("8/8/8/8/8/8/8/8")
+  end
 
-    expect(fen12.rows.length).to eq(12)
-    expect(fen12.rows.first).to eq("12")
-    expect(fen12.to_s).to eq("12/12/12/12/12/12/12/12/12/12/12/12")
+  it "uses 'p' instead of 'b' for bishops" do
+    expect {
+      fen.add_piece(BLACK, BISHOP, 0)
+    }.to change { fen.rows.first }.from("8").to("p7")
+  end
+
+  describe "larger boards" do
+    let(:fen) { Fen.new(12) }
+
+    it "uses base16 so no numbers are more than 1 digit" do
+      expect(fen.rows.length).to eq(12)
+      expect(fen.rows.first).to eq("c")
+      expect(fen.to_s).to eq("c/c/c/c/c/c/c/c/c/c/c/c")
+    end
+
+    it "can add pieces" do
+      expect {
+        fen.add_piece(WHITE, ROOK, 0)
+      }.to change { fen.rows.first }.from("c").to("Rb")
+
+      expect {
+        fen.add_piece(WHITE, ROOK, 11)
+      }.to change { fen.rows.first }.to("RaR")
+    end
   end
 
   describe "add_piece" do
@@ -44,11 +65,11 @@ RSpec.fdescribe Fen do
     it "last row" do
       expect {
         fen.add_piece(BLACK, BISHOP, 60)
-      }.to change { fen.rows.last }.from("8").to("4b3")
+      }.to change { fen.rows.last }.from("8").to("4p3")
 
       expect {
         fen.add_piece(WHITE, QUEEN, 63)
-      }.to change { fen.rows.last }.to("4b2Q")
+      }.to change { fen.rows.last }.to("4p2Q")
     end
   end
 
@@ -84,7 +105,7 @@ RSpec.fdescribe Fen do
       fen.add_piece(BLACK, BISHOP, 60)
       fen.add_piece(WHITE, QUEEN, 63)
 
-      expect(fen.to_s).to eq("2q1Rr2/8/8/8/8/8/8/4b2Q")
+      expect(fen.to_s).to eq("2q1Rr2/8/8/8/8/8/8/4p2Q")
     end
   end
 end

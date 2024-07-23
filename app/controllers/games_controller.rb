@@ -23,7 +23,14 @@ class GamesController < ApplicationController
   end
 
   if Rails.env.development?
-    def scratch_board
+    def fen_tool_board
+      @fen = Fen.new(12)
+    end
+
+    def fen_tool_update
+      @fen = Fen.from_s(params[:fen])
+      @fen.add_piece(params[:color], params[:piece_kind], params[:square].to_i)
+      Game.new.broadcast_fen(@fen)
     end
   end
 

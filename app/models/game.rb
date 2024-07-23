@@ -41,6 +41,17 @@ class Game < ApplicationRecord
     end
   end
 
+  def broadcast_fen_tool(fen)
+    broadcast_replace_to(
+      "fen-tool-container",
+      target: "fen-tool-container",
+      partial: "games/fen_tool_board",
+      locals: {
+        fen: fen,
+      },
+    )
+  end
+
   def initial_pieces
     {
       8 => ["KRN2nrk",
