@@ -7,17 +7,34 @@ export default class extends Controller {
   };
 
   selectSquare(event) {
-    this.postJson("/fen_tool_update", {
+    let params = {
       square: event.target.dataset.square,
-      color: this.colorValue,
-      piece_kind: this.pieceKindValue,
       fen: document.$("#fen").innerText,
-    });
+    };
+
+    if (this.colorValue) {
+      Object.assign(params, {
+        color: this.colorValue,
+        piece_kind: this.pieceKindValue,
+      });
+    }
+
+    this.postJson("/fen_tool_update", params);
   }
 
   selectPiece(event) {
-    this.colorValue = event.target.dataset.color;
-    this.pieceKindValue = event.target.dataset.pieceKind;
+    [...document.$$(".selected-piece-control")].forEach((node) => {
+      node.classList.remove("selected-piece-control");
+    });
+
+    if (event.target.dataset.color == this.colorValue && event.target.dataset.pieceKind == this.pieceKindValue) {
+      this.colorValue = "";
+      this.pieceKindValue = "";
+    } else {
+      event.target.parentNode.classList.add("selected-piece-control");
+      this.colorValue = event.target.dataset.color;
+      this.pieceKindValue = event.target.dataset.pieceKind;
+    }
   }
 
   postJson(url, body) {

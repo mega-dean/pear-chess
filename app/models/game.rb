@@ -41,14 +41,12 @@ class Game < ApplicationRecord
     end
   end
 
-  def broadcast_fen(fen)
+  def broadcast_fen(locals)
     broadcast_replace_to(
       "fen-tool-container",
       target: "fen-tool-container",
       partial: "games/fen_tool_board",
-      locals: {
-        fen: fen,
-      },
+      locals: locals,
     )
   end
 
@@ -56,25 +54,40 @@ class Game < ApplicationRecord
     {
       8 => [
         "KRN2nrk",
-        "BBN2nbb",
+        "PPN2npp",
         "NNN2nnn",
         "8",
         "8",
         "NNN2nnn",
-        "BBN2nbb",
+        "PPN2npp",
         "KRN2nrk",
       ].join("/"),
       10 => [
-        "KRQN2nqrk",
-        "BRN4nrb",
-        # "BNN2nnn",
-        # "8",
-        # "8",
-        # "NNN2nnn",
-        # "BBN2nbb",
-        # "KRN2nrk",
+        "KQRN2nrqk",
+        "PRNN2nnrp",
+        "PNN4nnp",
+        "NN6nn",
+        "a",
+        "a",
+        "NN6nn",
+        "PNN4nnp",
+        "PRNN2nnrp",
+        "KQRN2nrqk",
       ].join("/"),
-      12 => "",
+      12 => [
+        "KQPRN2nrpqk",
+        "PPRNN2nnrpp",
+        "PPNN4nnpp",
+        "PNN6nnp",
+        "NN8nn",
+        "c",
+        "c",
+        "NN8nn",
+        "PNN6nnp",
+        "PPNN4nnpp",
+        "PPRNN2nnrpp",
+        "KQPRN2nrpqk",
+      ].join("/"),
     }[self.board_size]
   end
 

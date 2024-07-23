@@ -1,5 +1,12 @@
+<%
+selected_color ||= ''
+selected_piece_kind ||= ''
+%>
+
 <div id="fen-tool-container"
      data-controller="fen-tool"
+     data-fen-tool-color-value="<%= selected_color %>"
+     data-fen-tool-piece-kind-value="<%= selected_piece_kind %>"
 >
   <div id="fen-tool-board">
     <% board_size = fen.rows.length %>
@@ -14,7 +21,12 @@
           >
             <% color, piece_kind = fen.piece_at((y * board_size) + x) %>
             <% if color %>
-              <%= image_tag("#{color}-#{piece_kind}.png", class: "piece") %>
+              <%= image_tag("#{color}-#{piece_kind}.png",
+                            class: "piece",
+                            data: {
+                              square: (y * board_size) + x,
+                            },
+              ) %>
             <% end %>
           </span>
         <% end %>
@@ -24,7 +36,7 @@
     <div id="piece-controls">
       <% [WHITE, BLACK].each do |color| %>
         <% [KNIGHT, BISHOP, ROOK, QUEEN, KING].each do |piece_kind| %>
-          <div class="piece-control"
+          <div class="piece-control <%= "selected-piece-control" if selected_color == color && selected_piece_kind == piece_kind %>"
                data-action="click->fen-tool#selectPiece"
                data-color="<%= color %>"
                data-piece-kind="<%= piece_kind %>"
@@ -46,4 +58,3 @@
     <%= fen&.to_s %>
   </div>
 </div>
-

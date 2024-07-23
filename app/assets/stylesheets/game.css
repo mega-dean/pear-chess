@@ -55,6 +55,11 @@
     /* width: 100%; */
 }
 
+.selected-piece-control {
+    background: #666;
+    box-shadow: inset -2px -2px #eee, inset 2px 2px #222;
+}
+
 img.piece {
     max-width: 100%;
 }

@@ -33,6 +33,24 @@ RSpec.describe Fen do
         fen.add_piece(WHITE, ROOK, 11)
       }.to change { fen.rows.first }.to("RaR")
     end
+
+    it "can remove pieces" do
+      fen.add_piece(WHITE, ROOK, 4)
+      fen.add_piece(BLACK, ROOK, 5)
+      fen.add_piece(BLACK, QUEEN, 2)
+
+      expect {
+        fen.remove_piece(5)
+      }.to change { fen.rows[0] }.from("2q1Rr6").to("2q1R7")
+
+      expect {
+        fen.remove_piece(4)
+      }.to change { fen.rows[0] }.to("2q9")
+
+      expect {
+        fen.remove_piece(3)
+      }.not_to change { fen.rows[0] }
+    end
   end
 
   describe "add_piece" do
@@ -78,9 +96,6 @@ RSpec.describe Fen do
       fen.add_piece(WHITE, ROOK, 4)
       fen.add_piece(BLACK, ROOK, 5)
       fen.add_piece(BLACK, QUEEN, 2)
-
-      fen.add_piece(BLACK, BISHOP, 60)
-      fen.add_piece(WHITE, QUEEN, 63)
 
       expect {
         fen.remove_piece(5)
