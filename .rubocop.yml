@@ -108,6 +108,10 @@ Metrics/PerceivedComplexity:
 
 Naming/BlockForwarding:
   Enabled: true
+Naming/AccessorMethodName:
+  Enabled: false
+Naming/MethodParameterName:
+  Enabled: false
 
 Security/CompoundHash:
   Enabled: true
@@ -257,3 +261,9 @@ Style/CommentAnnotation:
 Style/BlockDelimiters:
   # This can also work with `EnforcedStyle: semantic`, but that has some other weird effects.
   AllowedPatterns: ["let", "expect"]
+Style/RedundantSelf:
+  Enabled: false
+Style/SymbolArray:
+  Enabled: false
+Style/WordArray:
+  Enabled: false

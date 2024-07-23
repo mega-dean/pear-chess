@@ -41,7 +41,7 @@ class Game < ApplicationRecord
     end
   end
 
-  def broadcast_fen_tool(fen)
+  def broadcast_fen(fen)
     broadcast_replace_to(
       "fen-tool-container",
       target: "fen-tool-container",
@@ -54,24 +54,26 @@ class Game < ApplicationRecord
 
   def initial_pieces
     {
-      8 => ["KRN2nrk",
-            "BBN2nbb",
-            "NNN2nnn",
-            "8",
-            "8",
-            "NNN2nnn",
-            "BBN2nbb",
-            "KRN2nrk",
-           ].join("/"),
-      10 => ["KRQN2nqrk",
-             "BRN4nrb",
-             # "BNN2nnn",
-             # "8",
-             # "8",
-             # "NNN2nnn",
-             # "BBN2nbb",
-             # "KRN2nrk",
-            ].join("/"),
+      8 => [
+        "KRN2nrk",
+        "BBN2nbb",
+        "NNN2nnn",
+        "8",
+        "8",
+        "NNN2nnn",
+        "BBN2nbb",
+        "KRN2nrk",
+      ].join("/"),
+      10 => [
+        "KRQN2nqrk",
+        "BRN4nrb",
+        # "BNN2nnn",
+        # "8",
+        # "8",
+        # "NNN2nnn",
+        # "BBN2nbb",
+        # "KRN2nrk",
+      ].join("/"),
       12 => "",
     }[self.board_size]
   end
@@ -79,7 +81,7 @@ class Game < ApplicationRecord
   def start
     self.update!(
       current_turn: 1,
-      pieces: self.initial_pieces
+      pieces: self.initial_pieces,
     )
   end
 

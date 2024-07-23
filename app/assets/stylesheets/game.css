@@ -4,7 +4,6 @@
     justify-content: space-between;
 }
 
-/* FIXME this can probably be an id, since there should only be one board per page */
 #board {
     display: grid;
     grid-auto-columns: 2rem;

@@ -80,7 +80,7 @@ class Fen
   def row_to_squares(row)
     squares = Array.new(self.size, nil)
     current = 0
-    row.split("").each do |char|
+    row.chars.each do |char|
       if char.to_i(16) > 0
         current += char.to_i(16)
       else
@@ -99,11 +99,11 @@ class Fen
       if square.nil?
         current_empty_squares += 1
       else
-        if current_empty_squares > 0
-          row << "#{current_empty_squares.to_s(16)}#{square}"
-        else
-          row << "#{square}"
-        end
+        row << if current_empty_squares > 0
+                 "#{current_empty_squares.to_s(16)}#{square}"
+               else
+                 square.to_s
+               end
         current_empty_squares = 0
       end
     end
