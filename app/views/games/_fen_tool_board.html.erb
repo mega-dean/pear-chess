@@ -1,11 +1,13 @@
 <%
 selected_color ||= ''
+selected_team ||= ''
 selected_piece_kind ||= ''
 %>
 
 <div id="fen-tool-container"
      data-controller="fen-tool"
      data-fen-tool-color-value="<%= selected_color %>"
+     data-fen-tool-team-value="<%= selected_team %>"
      data-fen-tool-piece-kind-value="<%= selected_piece_kind %>"
 >
   <div id="fen-tool-board">
@@ -19,7 +21,7 @@ selected_piece_kind ||= ''
                 data-action="click->fen-tool#selectSquare"
                 data-square="<%= (y * board_size) + x %>"
           >
-            <% color, piece_kind = fen.piece_at((y * board_size) + x) %>
+            <% _, color, piece_kind = fen.piece_at((y * board_size) + x) %>
             <% if color %>
               <%= image_tag("#{color}-#{piece_kind}.png",
                             class: "piece",
@@ -34,22 +36,34 @@ selected_piece_kind ||= ''
     </div>
 
     <div id="piece-controls">
-      <% [WHITE, BLACK].each do |color| %>
-        <% [KNIGHT, BISHOP, ROOK, QUEEN, KING].each do |piece_kind| %>
-          <div class="piece-control <%= "selected-piece-control" if selected_color == color && selected_piece_kind == piece_kind %>"
-               data-action="click->fen-tool#selectPiece"
-               data-color="<%= color %>"
-               data-piece-kind="<%= piece_kind %>"
-          >
-            <%= image_tag("#{color}-#{piece_kind}.png",
-                          class: "piece",
-                          data: {
-                            color: color,
-                            piece_kind: piece_kind,
-                          },
-            ) %>
-          </div>
-        <% end %>
+      <% [TOP, BOTTOM].each do |team| %>
+        <div class="team-pieces-container">
+          <p><%= team %></p>
+          <% [WHITE, BLACK].each do |color| %>
+            <% [KNIGHT, BISHOP, ROOK, QUEEN, KING].each do |piece_kind| %>
+              <%
+              selected_class = if selected_color == color && selected_piece_kind == piece_kind && selected_team == team
+              "selected-piece-control"
+              end
+              %>
+              <div class="piece-control <%= selected_class %>"
+                   data-action="click->fen-tool#selectPiece"
+                   data-color="<%= color %>"
+                   data-team="<%= team %>"
+                   data-piece-kind="<%= piece_kind %>"
+              >
+                <%= image_tag("#{color}-#{piece_kind}.png",
+                              class: "piece #{team}",
+                              data: {
+                                color: color,
+                                piece_kind: piece_kind,
+                                team: team,
+                              },
+                ) %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>

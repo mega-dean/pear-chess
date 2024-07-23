@@ -1,9 +1,15 @@
-KNIGHT = "knight".freeze
-BISHOP = "bishop".freeze
-ROOK = "rook".freeze
-QUEEN = "queen".freeze
-KING = "king".freeze
+# frozen_string_literal: true
 
-WHITE = "white".freeze
-BLACK = "black".freeze
-RANDOM = "random".freeze
+KNIGHT = "knight"
+BISHOP = "bishop"
+ROOK = "rook"
+QUEEN = "queen"
+KING = "king"
+
+WHITE = "white"
+BLACK = "black"
+RANDOM = "random"
+
+# teams
+TOP = "top"
+BOTTOM = "bottom"

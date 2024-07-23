@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static values = {
     color: String,
+    team: String,
     pieceKind: String,
   };
 
@@ -15,6 +16,7 @@ export default class extends Controller {
     if (this.colorValue) {
       Object.assign(params, {
         color: this.colorValue,
+        team: this.teamValue,
         piece_kind: this.pieceKindValue,
       });
     }
@@ -27,12 +29,18 @@ export default class extends Controller {
       node.classList.remove("selected-piece-control");
     });
 
-    if (event.target.dataset.color == this.colorValue && event.target.dataset.pieceKind == this.pieceKindValue) {
+    const deselecting = event.target.dataset.color == this.colorValue &&
+                        event.target.dataset.pieceKind == this.pieceKindValue &&
+                        event.target.dataset.team == this.teamValue;
+
+    if (deselecting) {
       this.colorValue = "";
+      this.teamValue = "";
       this.pieceKindValue = "";
     } else {
       event.target.parentNode.classList.add("selected-piece-control");
       this.colorValue = event.target.dataset.color;
+      this.teamValue = event.target.dataset.team;
       this.pieceKindValue = event.target.dataset.pieceKind;
     }
   }

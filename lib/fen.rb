@@ -17,7 +17,7 @@ class Fen
     fen
   end
 
-  # Returns [color, piece_kind]
+  # Returns [team, color, piece_kind]
   def piece_at(square)
     target_row = square / self.size
     target_col = square % self.size
@@ -26,15 +26,20 @@ class Fen
     self.get_piece(squares[target_col])
   end
 
-  def add_piece(color, piece_kind, square)
+  def add_piece(team, color, piece_kind, square)
     new_value = begin
       char = {
-        KNIGHT => "n",
-        BISHOP => "p",
-        ROOK => "r",
-        QUEEN => "q",
-        KING => "k",
-      }[piece_kind]
+        [TOP, KNIGHT] => "n",
+        [TOP, BISHOP] => "i",
+        [TOP, ROOK] => "r",
+        [TOP, QUEEN] => "q",
+        [TOP, KING] => "k",
+        [BOTTOM, KNIGHT] => "m",
+        [BOTTOM, BISHOP] => "j",
+        [BOTTOM, ROOK] => "s",
+        [BOTTOM, QUEEN] => "u",
+        [BOTTOM, KING] => "l",
+      }[[team, piece_kind]]
 
       {
         WHITE => char.capitalize,
@@ -57,16 +62,26 @@ class Fen
 
   def get_piece(char)
     {
-      "N" => [WHITE, KNIGHT],
-      "P" => [WHITE, BISHOP],
-      "R" => [WHITE, ROOK],
-      "Q" => [WHITE, QUEEN],
-      "K" => [WHITE, KING],
-      "n" => [BLACK, KNIGHT],
-      "p" => [BLACK, BISHOP],
-      "r" => [BLACK, ROOK],
-      "q" => [BLACK, QUEEN],
-      "k" => [BLACK, KING],
+      "N" => [TOP, WHITE, KNIGHT],
+      "I" => [TOP, WHITE, BISHOP],
+      "R" => [TOP, WHITE, ROOK],
+      "Q" => [TOP, WHITE, QUEEN],
+      "K" => [TOP, WHITE, KING],
+      "n" => [TOP, BLACK, KNIGHT],
+      "i" => [TOP, BLACK, BISHOP],
+      "r" => [TOP, BLACK, ROOK],
+      "q" => [TOP, BLACK, QUEEN],
+      "k" => [TOP, BLACK, KING],
+      "M" => [BOTTOM, WHITE, KNIGHT],
+      "J" => [BOTTOM, WHITE, BISHOP],
+      "S" => [BOTTOM, WHITE, ROOK],
+      "U" => [BOTTOM, WHITE, QUEEN],
+      "L" => [BOTTOM, WHITE, KING],
+      "m" => [BOTTOM, BLACK, KNIGHT],
+      "j" => [BOTTOM, BLACK, BISHOP],
+      "s" => [BOTTOM, BLACK, ROOK],
+      "u" => [BOTTOM, BLACK, QUEEN],
+      "l" => [BOTTOM, BLACK, KING],
     }[char]
   end
 

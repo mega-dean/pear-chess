@@ -45,6 +45,10 @@
     background: #eee;
 }
 
+#piece-controls {
+    display: flex;
+}
+
 .piece-control {
     width: 4rem;
     height: 4rem;
