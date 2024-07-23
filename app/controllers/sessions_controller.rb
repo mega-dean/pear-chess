@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionsController < Clearance::SessionsController
   def new
     @signing_in = true

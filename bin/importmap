@@ -1,4 +1,4 @@
-#!/nix/store/fypibadggpbsh345sqqk5lb9s6sbi1s1-ruby-3.3.4/bin/ruby
+#!/usr/bin/env ruby
 
 require_relative "../config/application"
 require "importmap/commands"

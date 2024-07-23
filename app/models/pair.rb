@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Pair < ApplicationRecord
   validate :players_are_different
 

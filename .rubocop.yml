@@ -1,7 +1,13 @@
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   SuggestExtensions: false
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+    - 'db/**/*'
+    - 'config.ru'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'bin/{rails,rake,importmap}'
 
 Layout/LineLength:
   Max: 120
@@ -25,9 +31,34 @@ Layout/SpaceBeforeBrackets:
   Enabled: true
 Layout/MultilineAssignmentLayout:
   EnforcedStyle: same_line
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+Layout/FirstArgumentIndentation:
+  Enabled: true
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+Layout/ArgumentAlignment:
+  Enabled: true
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: true
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+Layout/MultilineOperationIndentation:
+  Enabled: true
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: true
+Layout/SpaceInsidePercentLiteralDelimiters:
+  Enabled: true
+Layout/TrailingEmptyLines:
+  Enabled: true
 
 Lint/AmbiguousAssignment:
   Enabled: true
+Lint/AmbiguousBlockAssociation:
+  Enabled: true
+  AllowedMethods: [change]
 Lint/AmbiguousOperatorPrecedence:
   Enabled: true
 Lint/AmbiguousRange:
@@ -105,6 +136,8 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
+Metrics/ClassLength:
+  Enabled: false
 
 Naming/BlockForwarding:
   Enabled: true
@@ -112,6 +145,8 @@ Naming/AccessorMethodName:
   Enabled: false
 Naming/MethodParameterName:
   Enabled: false
+Naming/VariableNumber:
+  Enabled: true
 
 Security/CompoundHash:
   Enabled: true
@@ -257,7 +292,10 @@ Style/StringLiterals:
 Style/NumericPredicate:
   Enabled: false
 Style/CommentAnnotation:
-  Keywords: [FIXME, CLEANUP, TODO]
+  Keywords: [
+  # FIXME, CLEANUP,
+  TODO,
+  ]
 Style/BlockDelimiters:
   # This can also work with `EnforcedStyle: semantic`, but that has some other weird effects.
   AllowedPatterns: ["let", "expect"]
@@ -267,3 +305,9 @@ Style/SymbolArray:
   Enabled: false
 Style/WordArray:
   Enabled: false
+Style/SoleNestedConditional:
+  Enabled: true
+Style/BlockComments:
+  Enabled: true
+Style/FrozenStringLiteralComment:
+  Enabled: true

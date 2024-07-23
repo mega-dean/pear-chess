@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fen
   attr_accessor :size, :rows
 
@@ -92,7 +94,7 @@ class Fen
   end
 
   def squares_to_row(squares)
-    row = ""
+    row = String.new("")
     current_empty_squares = 0
 
     squares.each do |square|
@@ -100,10 +102,10 @@ class Fen
         current_empty_squares += 1
       else
         row << if current_empty_squares > 0
-                 "#{current_empty_squares.to_s(16)}#{square}"
-               else
-                 square.to_s
-               end
+          "#{current_empty_squares.to_s(16)}#{square}"
+        else
+          square.to_s
+        end
         current_empty_squares = 0
       end
     end

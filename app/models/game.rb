@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Game < ApplicationRecord
   validates :turn_duration, presence: true
   validates :board_size, presence: true
@@ -15,15 +17,15 @@ class Game < ApplicationRecord
       pair_count = game_params[:number_of_players].to_i / 2
       pair_count.times do |idx|
         pair_params = if idx == 0
-                        creator_color = if game_params[:play_as] == RANDOM
-                                          [WHITE, BLACK].sample
-                                        else
-                                          game_params[:play_as]
-                                        end
-                        { "#{creator_color}_player_id" => creator.id }
-                      else
-                        {}
-                      end
+          creator_color = if game_params[:play_as] == RANDOM
+            [WHITE, BLACK].sample
+          else
+            game_params[:play_as]
+          end
+          { "#{creator_color}_player_id" => creator.id }
+        else
+          {}
+        end
 
         game.pairs.create!(pair_params)
       end
