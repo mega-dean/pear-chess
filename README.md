@@ -2,7 +2,7 @@
 
 ## About
 
-Multiplayer chess
+2v2 chess where moves are executed in parallel.
 
 ## Development
 
