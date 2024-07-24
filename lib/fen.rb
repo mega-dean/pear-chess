@@ -17,13 +17,10 @@ class Fen
     fen
   end
 
-  # Returns [team, color, piece_kind]
-  def piece_at(square)
-    target_row = square / self.size
-    target_col = square % self.size
-
-    squares = self.row_to_squares(self.rows[target_row])
-    self.get_piece(squares[target_col])
+  def to_squares
+    self.rows.map do |row|
+      self.row_to_squares(row)
+    end
   end
 
   def add_piece(team, color, piece_kind, square)
@@ -58,8 +55,7 @@ class Fen
     self.rows.join("/")
   end
 
-  private
-
+  # Returns [team, color, piece_kind]
   def get_piece(char)
     {
       "N" => [TOP, WHITE, KNIGHT],
@@ -84,6 +80,8 @@ class Fen
       "l" => [BOTTOM, BLACK, KING],
     }[char]
   end
+
+  private
 
   def change_square(square, new_value)
     target_row = square / self.size

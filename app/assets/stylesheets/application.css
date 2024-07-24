@@ -43,6 +43,11 @@ html {
     max-height: 100%;
 }
 
+#fen-tool-links {
+    display: flex;
+    flex-direction: column;
+}
+
 #content-container {
     margin-top: 6rem;
     padding: 1rem;

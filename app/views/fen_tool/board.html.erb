@@ -1,8 +1,7 @@
 <%= turbo_stream_from("fen-tool-container") %>
-<%= render partial: "games/fen_tool_board", locals: {
+<%= render partial: "fen_tool/board", locals: {
   fen: @fen,
   selected_color: nil,
   selected_team: nil,
   selected_piece_kind: nil,
 } %>
-

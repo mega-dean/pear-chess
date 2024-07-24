@@ -23,34 +23,7 @@ class GamesController < ApplicationController
     @games = Game.where(current_turn: 0)
   end
 
-  if Rails.env.development?
-    def fen_tool_board
-      @fen = Fen.new(10)
-    end
 
-    def fen_tool_update
-      @fen = Fen.from_s(params[:fen])
-
-      if params[:color]
-        @fen.add_piece(
-          params[:team],
-          params[:color],
-          params[:piece_kind],
-          params[:square].to_i,
-        )
-      else
-        @fen.remove_piece(params[:square].to_i)
-      end
-
-      Game.new.broadcast_fen({
-        fen: @fen,
-        selected_color: params[:color],
-        selected_team: params[:team],
-        selected_piece_kind: params[:piece_kind],
-      })
-
-      head :ok
-    end
   end
 
   private

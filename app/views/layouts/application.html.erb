@@ -17,6 +17,14 @@
         <%= link_to(image_tag("logo"), "/") %>
       </div>
 
+      <% if Rails.env.development? %>
+        <div id="fen-tool-links">
+          <%= link_to("fen tool (8)", fen_tool_path(size: 8)) %>
+          <%= link_to("fen tool (10)", fen_tool_path(size: 10)) %>
+          <%= link_to("fen tool (12)", fen_tool_path(size: 12)) %>
+        </div>
+      <% end %>
+
       <div id="login-status">
         <% if signed_in? %>
           Signed in as: <%= current_user.username %>

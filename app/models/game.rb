@@ -47,7 +47,7 @@ class Game < ApplicationRecord
     broadcast_replace_to(
       "fen-tool-container",
       target: "fen-tool-container",
-      partial: "games/fen_tool_board",
+      partial: "fen_tool/board",
       locals: locals,
     )
   end

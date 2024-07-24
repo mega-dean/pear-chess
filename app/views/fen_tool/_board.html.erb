@@ -12,6 +12,7 @@ selected_piece_kind ||= ''
 >
   <div id="fen-tool-board">
     <% board_size = fen.rows.length %>
+    <% squares = fen.to_squares %>
 
     <div id="board" class="board-<%= board_size %>">
       <% board_size.times do |y| %>
@@ -21,7 +22,7 @@ selected_piece_kind ||= ''
                 data-action="click->fen-tool#selectSquare"
                 data-square="<%= (y * board_size) + x %>"
           >
-            <% _, color, piece_kind = fen.piece_at((y * board_size) + x) %>
+            <% _, color, piece_kind = fen.get_piece(squares[y][x]) %>
             <% if color %>
               <%= image_tag("#{color}-#{piece_kind}.png",
                             class: "piece",
