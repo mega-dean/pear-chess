@@ -41,6 +41,13 @@ RSpec.describe Game, type: :model do
 
         expect(game.valid?).to be(false)
       end
+
+      it "is valid when pairs have nil players" do
+        pairs.first.update!(white_player_id: nil, black_player_id: nil)
+        pairs.last.update!(white_player_id: nil, black_player_id: nil)
+
+        expect(game.valid?).to be(true)
+      end
     end
   end
 
