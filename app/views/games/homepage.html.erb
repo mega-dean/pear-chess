@@ -8,7 +8,7 @@
           <div>Number of players:</div>
           <% Game.valid_form_options[:number_of_players].each do |number| %>
             <%= form.radio_button(:number_of_players, number) %>
-            <%= form.label(:"number_of_players_#{number}", "#{number} players") %>
+            <%= form.label("number_of_players_#{number}", "#{number} players") %>
           <% end %>
         </div>
 
@@ -16,7 +16,7 @@
           <div>Board size:</div>
           <% Game.valid_form_options[:board_size].each do |size| %>
             <%= form.radio_button(:board_size, size) %>
-            <%= form.label(:"board_size_#{size}", "#{size}x#{size}") %>
+            <%= form.label("board_size_#{size}", "#{size}x#{size}") %>
           <% end %>
         </div>
 
@@ -24,7 +24,7 @@
           <div>Turn duration:</div>
           <% Game.valid_form_options[:turn_duration].each do |duration| %>
             <%= form.radio_button(:turn_duration, duration) %>
-            <%= form.label(:"turn_duration_#{duration}", "#{duration} seconds") %>
+            <%= form.label("turn_duration_#{duration}", "#{duration} seconds") %>
           <% end %>
         </div>
 
@@ -32,7 +32,7 @@
           <div>Play as:</div>
           <% Game.valid_form_options[:play_as].each do |color| %>
             <%= form.radio_button(:play_as, color) %>
-            <%= form.label(:"play_as_#{color}", color) %>
+            <%= form.label("play_as_#{color}", color) %>
           <% end %>
         </div>
       </div>

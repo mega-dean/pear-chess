@@ -67,3 +67,15 @@
 img.piece {
     max-width: 100%;
 }
+
+.current-teammate {
+    background: rgba(200, 200, 150, 0.3);
+}
+
+.current-player {
+    background: rgba(100, 200, 150, 0.4);
+}
+
+.enemy {
+    background: rgba(250, 00, 00, 0.15);
+}

@@ -11,6 +11,10 @@ class GamesController < ApplicationController
     end
   end
 
+  def show
+    @game = Game.find(params[:id])
+  end
+
   def params_valid?
     Game.valid_form_options[:number_of_players].include?(game_params[:number_of_players]&.to_i) &&
       Game.valid_form_options[:board_size].include?(game_params[:board_size]&.to_i) &&
@@ -21,9 +25,6 @@ class GamesController < ApplicationController
   def homepage
     @new_game = Game.new
     @games = Game.where(current_turn: 0)
-  end
-
-
   end
 
   private

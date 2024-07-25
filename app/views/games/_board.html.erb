@@ -1,0 +1,49 @@
+<div id="board-container">
+  <div id="game-board">
+    <%
+    fen = Fen.from_s(game.pieces)
+    board_size = fen.rows.length
+    squares = fen.to_squares
+    %>
+
+    <div id="board" class="board-<%= board_size %>">
+      <%
+      current_team = current_user.team(game)
+      current_color = current_user.color(game)
+      %>
+      <% (board_size - 1).downto(0).each do |y_| %>
+        <% y = {
+          TOP => y_,
+          BOTTOM => 7 - y_,
+        }[current_team] %>
+        <% board_size.times do |x| %>
+          <% span_class = "#{y%2 == x%2 ? 'light' : 'dark'}" %>
+          <span class="square <%= span_class %>"
+                data-action="click->game#selectSquare"
+                data-square="<%= (y * board_size) + x %>"
+          >
+            <% team, color, piece_kind = fen.get_piece(squares[y][x]) %>
+            <% if color %>
+              <% image_class = if team == current_team
+                   if color == current_color
+                     "current-player"
+                   else
+                     "current-teammate"
+                   end
+                 else
+                   "enemy"
+                 end
+              %>
+              <%= image_tag("#{color}-#{piece_kind}.png",
+                            class: "piece #{image_class}",
+                            data: {
+                              square: (y * board_size) + x,
+                            },
+              ) %>
+            <% end %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

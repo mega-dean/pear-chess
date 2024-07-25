@@ -1,3 +1,8 @@
-<div>
-  <p>this is the board</p>
-</div>
+
+<% if @game.current_turn > 0 %>
+  <%= render(partial: "games/board", locals: {
+    game: @game,
+  }) %>
+<% else %>
+  <p>(waiting for other players)</p>
+<% end %>

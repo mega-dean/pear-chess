@@ -100,6 +100,25 @@ class Game < ApplicationRecord
     )
   end
 
+  def teams
+    top_players, bottom_players = if self.pairs.count == 1
+      [
+        [self.pairs.first.white_player_id],
+        [self.pairs.first.black_player_id],
+      ]
+    else
+      [
+        [self.pairs.first.white_player_id, self.pairs.last.black_player_id],
+        [self.pairs.first.black_player_id, self.pairs.last.white_player_id],
+      ]
+    end
+
+    {
+      TOP => top_players,
+      BOTTOM => bottom_players,
+    }
+  end
+
   private
 
   def pairs_have_unique_players

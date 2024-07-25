@@ -15,7 +15,7 @@
  */
 
 html {
-    background: #888;
+    background: #808580;
 }
 
 #app {
@@ -29,7 +29,7 @@ html {
     top: 0;
     left: 0;
     width: 100%;
-    background: #999;
+    background: #858580;
     border-bottom: 1px solid black;
     box-shadow: 0 0.5rem 1rem black;
     padding: 0.5rem 1rem;
