@@ -83,4 +83,57 @@ RSpec.describe Game, type: :model do
       expect(game.pairs.last.white_player_id).to be(nil)
     end
   end
+
+  describe "teams" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:teammate) { FactoryBot.create(:user) }
+    let(:opponent1) { FactoryBot.create(:user) }
+    let(:opponent2) { FactoryBot.create(:user) }
+    let(:params) {
+      {
+        board_size: 8,
+        turn_duration: 15,
+        play_as: BLACK,
+      }
+    }
+
+    it "returns two players for 2-player games" do
+      game = Game.make(creator: user, game_params: params.merge(number_of_players: 2))
+      game.pairs.sole!.update!(white_player: opponent1)
+
+      expect(game.reload.teams).to eq({
+        TOP => [opponent1.id],
+        BOTTOM => [user.id],
+      })
+    end
+
+    it "returns four players for 4-player games" do
+      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+      game.pairs.first.update!(white_player: opponent1)
+
+      game.pairs.last.update!(white_player: teammate)
+      game.pairs.last.update!(black_player: opponent2)
+
+      expect(game.reload.teams).to eq({
+        TOP => [opponent1.id, opponent2.id],
+        BOTTOM => [user.id, teammate.id],
+      })
+    end
+
+    it "returns empty lists when not all players have been set" do
+      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+
+      expect(game.reload.teams).to eq({
+        TOP => [],
+        BOTTOM => [user.id],
+      })
+    end
+
+    it "raises an error when there are too many pairs" do
+      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+      game.pairs.create!
+
+      expect { game.reload.teams }.to raise_error(Game::NotSupportedYet)
+    end
+  end
 end

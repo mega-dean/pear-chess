@@ -10,6 +10,8 @@ class Game < ApplicationRecord
 
   attribute :current_turn, default: 0
 
+  class NotSupportedYet < StandardError; end
+
   class << self
     def make(creator:, game_params:)
       game = Game.create!(game_params.slice(:board_size, :turn_duration))
@@ -100,22 +102,35 @@ class Game < ApplicationRecord
     )
   end
 
+  # The two players in a Pair are across from each other diagonally on the board:
+  #
+  # +-----------------------------+
+  # |pair1,white       pair2,black|
+  # |            \   /            |
+  # |             \ /             |
+  # |              X              |
+  # |             / \             |
+  # |            /   \            |
+  # |pair2,white       pair1,black|
+  # +-----------------------------+
+  #
+  # "TOP" and "BOTTOM" are probably not the best team names, because when the game board is rendered, it is flipped
+  # vertically and horizontally so the current_user is always in the bottom-left corner.
   def teams
-    top_players, bottom_players = if self.pairs.count == 1
-      [
+    top_players, bottom_players = {
+      1 => [
         [self.pairs.first.white_player_id],
         [self.pairs.first.black_player_id],
-      ]
-    else
-      [
+      ],
+      2 => [
         [self.pairs.first.white_player_id, self.pairs.last.black_player_id],
         [self.pairs.first.black_player_id, self.pairs.last.white_player_id],
-      ]
-    end
+      ],
+    }[self.pairs.count] || raise(NotSupportedYet, "can't have more than 2 pairs (got #{self.pairs.count})")
 
     {
-      TOP => top_players,
-      BOTTOM => bottom_players,
+      TOP => top_players.compact,
+      BOTTOM => bottom_players.compact,
     }
   end
 

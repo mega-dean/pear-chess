@@ -311,3 +311,5 @@ Style/BlockComments:
   Enabled: true
 Style/FrozenStringLiteralComment:
   Enabled: true
+Style/TrailingUnderscoreVariable:
+  Enabled: false

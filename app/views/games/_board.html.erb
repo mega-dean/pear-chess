@@ -11,12 +11,16 @@
       current_team = current_user.team(game)
       current_color = current_user.color(game)
       %>
-      <% (board_size - 1).downto(0).each do |y_| %>
+      <% board_size.times do |y_| %>
         <% y = {
-          TOP => y_,
-          BOTTOM => 7 - y_,
+          TOP => (board_size - 1) - y_,
+          BOTTOM => y_,
         }[current_team] %>
-        <% board_size.times do |x| %>
+        <% board_size.times do |x_| %>
+          <% x = {
+            WHITE => x_,
+            BLACK => (board_size - 1) - x_,
+          }[current_color] %>
           <% span_class = "#{y%2 == x%2 ? 'light' : 'dark'}" %>
           <span class="square <%= span_class %>"
                 data-action="click->game#selectSquare"

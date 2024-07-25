@@ -6,7 +6,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
 
   def team(game)
-    team, _ = game.teams.find do |team, player_ids|
+    team, _ = game.teams.find do |_, player_ids|
       player_ids.include?(self.id)
     end
 
