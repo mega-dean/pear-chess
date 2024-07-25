@@ -3,7 +3,7 @@
 class GamesController < ApplicationController
   def create
     if params[:game] && params_valid?
-      @game = Game.make(creator: current_user, game_params: game_params)
+      @game = Game.make!(creator: current_user, game_params: game_params)
       redirect_to(game_path(@game))
     else
       flash[:alert] = "flash.game_create_failure"
@@ -16,9 +16,11 @@ class GamesController < ApplicationController
   end
 
   def params_valid?
-    Game.valid_form_options[:number_of_players].include?(game_params[:number_of_players]&.to_i) &&
-      Game.valid_form_options[:board_size].include?(game_params[:board_size]&.to_i) &&
-      Game.valid_form_options[:turn_duration].include?(game_params[:turn_duration]&.to_i) &&
+    def param_valid?(param)
+      Game.valid_form_options[param].include?(game_params[param]&.to_i)
+    end
+
+    [:number_of_players, :board_size, :turn_duration].all? { |p| param_valid?(p) } &&
       Game.valid_form_options[:play_as].include?(game_params[:play_as])
   end
 

@@ -5,6 +5,7 @@
   squares = fen.to_squares
   current_team = current_user.team(game)
   current_color = game.current_color
+  user_color = current_user.color(game)
   %>
   <%= current_team %>
   <div id="game-board"
@@ -19,7 +20,7 @@
         y = {
           TOP => (board_size - 1) - rendered_y,
           BOTTOM => rendered_y,
-        }[current_team]
+        }[current_team] || rendered_y
         %>
 
         <% board_size.times do |rendered_x| %>
@@ -27,7 +28,7 @@
           x = {
             WHITE => rendered_x,
             BLACK => (board_size - 1) - rendered_x,
-          }[current_user.color(game)]
+          }[user_color] || rendered_x
           span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
           team, color, piece_kind = fen.get_piece(squares[y][x])
           %>

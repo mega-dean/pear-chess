@@ -13,7 +13,7 @@ class Game < ApplicationRecord
   class NotSupportedYet < StandardError; end
 
   class << self
-    def make(creator:, game_params:)
+    def make!(creator:, game_params:)
       game = Game.create!(game_params.slice(:board_size, :turn_duration))
 
       pair_count = game_params[:number_of_players].to_i / 2

@@ -51,7 +51,7 @@ RSpec.describe Game, type: :model do
     end
   end
 
-  describe "make" do
+  describe "make!" do
     let(:user) { FactoryBot.create(:user) }
     let(:params) {
       {
@@ -63,7 +63,7 @@ RSpec.describe Game, type: :model do
     }
 
     let(:game) {
-      Game.make(creator: user, game_params: params)
+      Game.make!(creator: user, game_params: params)
     }
 
     it "creates a game with the given params" do
@@ -98,7 +98,7 @@ RSpec.describe Game, type: :model do
     }
 
     it "returns two players for 2-player games" do
-      game = Game.make(creator: user, game_params: params.merge(number_of_players: 2))
+      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 2))
       game.pairs.sole!.update!(white_player: opponent1)
 
       expect(game.reload.teams).to eq({
@@ -108,7 +108,7 @@ RSpec.describe Game, type: :model do
     end
 
     it "returns four players for 4-player games" do
-      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
       game.pairs.first.update!(white_player: opponent1)
 
       game.pairs.last.update!(white_player: teammate)
@@ -121,7 +121,7 @@ RSpec.describe Game, type: :model do
     end
 
     it "returns empty lists when not all players have been set" do
-      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
 
       expect(game.reload.teams).to eq({
         TOP => [],
@@ -130,7 +130,7 @@ RSpec.describe Game, type: :model do
     end
 
     it "raises an error when there are too many pairs" do
-      game = Game.make(creator: user, game_params: params.merge(number_of_players: 4))
+      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
       game.pairs.create!
 
       expect { game.reload.teams }.to raise_error(Game::NotSupportedYet)

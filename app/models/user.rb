@@ -13,12 +13,21 @@ class User < ApplicationRecord
     team
   end
 
+  def playing_in?(game)
+    !!self.color(game)
+  end
+
   def color(game)
-    game.pairs.each do |pair|
-      if pair.white_player_id == self.id
-        return WHITE
-      elsif pair.black_player_id == self.id
-        return BLACK
+    if game.pairs.count == 1
+      # If the game is only 2-player, then each player plays as both white and black.
+      WHITE
+    else
+      game.pairs.each do |pair|
+        if pair.white_player_id == self.id
+          return WHITE
+        elsif pair.black_player_id == self.id
+          return BLACK
+        end
       end
     end
   end

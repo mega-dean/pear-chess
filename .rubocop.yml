@@ -123,6 +123,8 @@ Lint/UselessRescue:
   Enabled: true
 Lint/UselessRuby2Keywords:
   Enabled: true
+Lint/NestedMethodDefinition:
+  Enabled: false
 
 Metrics/CollectionLiteralLength:
   Enabled: true

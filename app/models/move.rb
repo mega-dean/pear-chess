@@ -9,7 +9,7 @@ class Move < ApplicationRecord
   validates :dest_square, presence: true
 
   class << self
-    def make(game:, user:, params:)
+    def make!(game:, user:, params:)
       src_square = (params[:src_square_y].to_i * game.board_size) + params[:src_square_x].to_i
       dest_square = (params[:dest_square_y].to_i * game.board_size) + params[:dest_square_x].to_i
 

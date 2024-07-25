@@ -13,18 +13,18 @@ RSpec.describe User, type: :model do
   let(:user) { FactoryBot.create(:user) }
 
   specify "team" do
-    game = Game.make(creator: user, game_params: game_params.merge(play_as: WHITE))
+    game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
     expect(user.team(game)).to be(TOP)
 
-    game = Game.make(creator: user, game_params: game_params.merge(play_as: BLACK))
+    game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
     expect(user.team(game)).to be(BOTTOM)
   end
 
   specify "color" do
-    game = Game.make(creator: user, game_params: game_params.merge(play_as: WHITE))
+    game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
     expect(user.color(game)).to be(WHITE)
 
-    game = Game.make(creator: user, game_params: game_params.merge(play_as: BLACK))
+    game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
     expect(user.color(game)).to be(BLACK)
   end
 end
