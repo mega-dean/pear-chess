@@ -1,48 +1,63 @@
 <div id="board-container">
-  <div id="game-board">
-    <%
-    fen = Fen.from_s(game.pieces)
-    board_size = fen.rows.length
-    squares = fen.to_squares
-    %>
-
+  <%
+  fen = Fen.from_s(game.pieces)
+  board_size = fen.rows.length
+  squares = fen.to_squares
+  current_team = current_user.team(game)
+  current_color = current_user.color(game)
+  %>
+  <%= current_team %>
+  <div id="game-board"
+       data-controller="game"
+       data-game-board-size-value="<%= board_size %>"
+  >
     <div id="board" class="board-<%= board_size %>">
-      <%
-      current_team = current_user.team(game)
-      current_color = current_user.color(game)
-      %>
-      <% board_size.times do |y_| %>
-        <% y = {
-          TOP => (board_size - 1) - y_,
-          BOTTOM => y_,
-        }[current_team] %>
-        <% board_size.times do |x_| %>
-          <% x = {
-            WHITE => x_,
-            BLACK => (board_size - 1) - x_,
-          }[current_color] %>
-          <% span_class = "#{y%2 == x%2 ? 'light' : 'dark'}" %>
-          <span class="square <%= span_class %>"
+      <% board_size.times do |rendered_y| %>
+        <%
+        y = {
+          TOP => (board_size - 1) - rendered_y,
+          BOTTOM => rendered_y,
+        }[current_team]
+        %>
+
+        <% board_size.times do |rendered_x| %>
+          <%
+          x = {
+            WHITE => rendered_x,
+            BLACK => (board_size - 1) - rendered_x,
+          }[current_color]
+          span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
+          team, color, piece_kind = fen.get_piece(squares[y][x])
+          %>
+
+          <%
+          if color
+            image_class = if team == current_team
+              if color == current_color
+                "current-player"
+              else
+                {
+                  1 => "current-player",
+                  2 => "current-teammate",
+                }[game.pairs.count] || raise(Game::NotSupportedYet, "invalid pair count #{game.pairs.count}")
+              end
+            else
+              "enemy"
+            end
+          end
+          %>
+
+          <span class="square square-<%= "#{x}-#{y}" %> <%= span_class %>"
                 data-action="click->game#selectSquare"
-                data-square="<%= (y * board_size) + x %>"
+                data-color="<%= color %>"
+                data-piece-kind="<%= piece_kind %>"
+                data-image-class="<%= image_class %>"
+                data-square-x="<%= x %>"
+                data-square-y="<%= y %>"
           >
-            <% team, color, piece_kind = fen.get_piece(squares[y][x]) %>
             <% if color %>
-              <% image_class = if team == current_team
-                   if color == current_color
-                     "current-player"
-                   else
-                     "current-teammate"
-                   end
-                 else
-                   "enemy"
-                 end
-              %>
               <%= image_tag("#{color}-#{piece_kind}.png",
-                            class: "piece #{image_class}",
-                            data: {
-                              square: (y * board_size) + x,
-                            },
+                            class: "piece piece-#{x}-#{y} #{image_class}",
               ) %>
             <% end %>
           </span>
