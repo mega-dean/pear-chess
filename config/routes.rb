@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   end
 
   resources :games, only: [:show, :create]
+  resources :moves, only: [:create]
 
   if Rails.env.development?
     get "/fen_tool/:size" => "fen_tool#board", as: "fen_tool"

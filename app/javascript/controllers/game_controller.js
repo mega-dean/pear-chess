@@ -4,7 +4,10 @@ export default class extends Controller {
   static values = {
     selectedPieceX: Number,
     selectedPieceY: Number,
+    selectedPieceColor: String,
+    currentColor: String,
     boardSize: Number,
+    gameId: Number,
   };
 
   connect() {
@@ -29,30 +32,41 @@ export default class extends Controller {
     const deselectPiece = () => {
       this.selectedPieceXValue = null;
       this.selectedPieceYValue = null;
+      this.selectedPieceColorValue = null;
 
       this.removeTargets();
     };
 
     const clickedPieceBelongsToPlayer = () => dataset.imageClass === "current-player";
+    const clickedPieceIsCurrentColor = () => dataset.color === this.currentColorValue;
 
     const selectClickedPiece = () => {
       this.selectedPieceXValue = squareX;
       this.selectedPieceYValue = squareY;
+      this.selectedPieceColorValue = dataset.color;
 
       this.setTargetMoves(dataset.pieceKind);
     };
 
     const squareIsValidMove = () => square.classList.contains("target-move");
     const createMove = () => {
+      const params = {
+        game_id: this.gameIdValue,
+        color: this.selectedPieceColorValue,
+        src_square_x: this.selectedPieceXValue,
+        src_square_y: this.selectedPieceYValue,
+        dest_square_x: squareX,
+        dest_square_y: squareY,
+      };
       deselectPiece();
-      console.log('creating move');
+      this.postJson("/moves", params);
     };
 
     if (clickedSquareHasPiece()) {
       if (clickedPieceIsAlreadySelected()) {
         deselectPiece();
       } else {
-        if (clickedPieceBelongsToPlayer()) {
+        if (clickedPieceBelongsToPlayer() && clickedPieceIsCurrentColor()) {
           selectClickedPiece();
         }
       }
@@ -165,5 +179,19 @@ export default class extends Controller {
     }
 
     return moves;
+  }
+
+  // CLEANUP move to utils.js
+  postJson(url, body) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify(body),
+    });
   }
 }

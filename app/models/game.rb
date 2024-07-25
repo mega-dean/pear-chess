@@ -134,6 +134,16 @@ class Game < ApplicationRecord
     }
   end
 
+  def current_color
+    if self.current_turn > 0
+      if self.current_turn.odd?
+        WHITE
+      else
+        BLACK
+      end
+    end
+  end
+
   private
 
   def pairs_have_unique_players
