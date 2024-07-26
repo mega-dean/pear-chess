@@ -54,6 +54,16 @@ class Game < ApplicationRecord
     )
   end
 
+  def get_fen
+    if self.pieces
+      Fen.from_s(self.pieces)
+    end
+  end
+
+  def square_at(x, y)
+    (y * board_size) + x
+  end
+
   def initial_pieces
     {
       8 => [

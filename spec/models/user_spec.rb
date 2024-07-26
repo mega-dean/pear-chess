@@ -20,11 +20,23 @@ RSpec.describe User, type: :model do
     expect(user.team(game)).to be(BOTTOM)
   end
 
-  specify "color" do
-    game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
-    expect(user.color(game)).to be(WHITE)
+  describe "color" do
+    it "is always WHITE for a 2-player game" do
+      game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
+      expect(user.color(game)).to be(WHITE)
 
-    game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
-    expect(user.color(game)).to be(BLACK)
+      game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
+      expect(user.color(game)).to be(WHITE)
+    end
+
+    it "is the user's color for a 4-player game" do
+      game_params[:number_of_players] = 4
+
+      game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
+      expect(user.color(game)).to be(WHITE)
+
+      game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
+      expect(user.color(game)).to be(BLACK)
+    end
   end
 end

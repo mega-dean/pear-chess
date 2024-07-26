@@ -33,6 +33,8 @@ Layout/MultilineAssignmentLayout:
   EnforcedStyle: same_line
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+Layout/MultilineMethodCallBraceLayout:
+  Enabled: false
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 Layout/FirstArgumentIndentation:
@@ -40,7 +42,7 @@ Layout/FirstArgumentIndentation:
 Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 Layout/ArgumentAlignment:
-  Enabled: true
+  Enabled: false
 Layout/EmptyLinesAroundBlockBody:
   Enabled: true
 Layout/FirstArrayElementIndentation:
@@ -209,8 +211,10 @@ Style/MinMaxComparison:
   Enabled: true
 Style/MultilineInPatternThen:
   Enabled: true
+Style/NegatedIf:
+  Enabled: false
 Style/NegatedIfElseCondition:
-  Enabled: true
+  Enabled: false
 Style/NestedFileDirname:
   Enabled: true
 Style/NilLambda:
@@ -303,15 +307,19 @@ Style/BlockDelimiters:
   AllowedPatterns: ["let", "expect"]
 Style/RedundantSelf:
   Enabled: false
+Style/RedundantParentheses:
+  Enabled: false
 Style/SymbolArray:
   Enabled: false
 Style/WordArray:
   Enabled: false
 Style/SoleNestedConditional:
-  Enabled: true
+  Enabled: false
 Style/BlockComments:
   Enabled: true
 Style/FrozenStringLiteralComment:
   Enabled: true
 Style/TrailingUnderscoreVariable:
+  Enabled: false
+Style/YodaCondition:
   Enabled: false
