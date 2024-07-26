@@ -17,4 +17,12 @@ FactoryBot.define do
     association :white_player, factory: :user
     association :black_player, factory: :user
   end
+
+  factory :move do
+    association :game
+    association :user
+    turn { 1 }
+    src { 0 }
+    dest { 1 }
+  end
 end

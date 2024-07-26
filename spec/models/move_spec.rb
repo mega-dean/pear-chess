@@ -3,34 +3,36 @@
 require "rails_helper"
 
 RSpec.describe Move, type: :model do
-  describe "validations" do
-    describe "src_square" do
-      let!(:user) { FactoryBot.create(:user) }
-      let!(:fen) {
-        fen = Fen.new(8)
-        fen.add_piece(TOP, WHITE, ROOK, 0)
-        fen.add_piece(BOTTOM, WHITE, ROOK, 1)
-        fen.add_piece(TOP, BLACK, ROOK, 2)
-        fen.add_piece(BOTTOM, BLACK, ROOK, 3)
-        fen
-      }
-      let!(:game) {
-        FactoryBot.create(:game,
-          pieces: fen.to_s,
-          current_turn: 1,
-          pairs: [FactoryBot.create(:pair, white_player: user)],
-        )
-      }
+  let(:user) { FactoryBot.create(:user) }
 
+  let(:fen) {
+    Fen.new(8).tap do |fen|
+      fen.add_piece(TOP, WHITE, ROOK, 0)
+      fen.add_piece(BOTTOM, WHITE, ROOK, 1)
+      fen.add_piece(TOP, BLACK, ROOK, 2)
+      fen.add_piece(BOTTOM, BLACK, ROOK, 3)
+    end
+  }
+
+  let!(:game) {
+    FactoryBot.create(:game,
+      pieces: fen.to_s,
+      current_turn: 1,
+      pairs: [FactoryBot.create(:pair, white_player: user)],
+    )
+  }
+
+  describe "validations" do
+    describe "src" do
       def make_move!(x)
         Move.make!(
           game: game,
           user: user,
           params: {
-            src_square_x: x,
-            src_square_y: 0,
-            dest_square_x: x,
-            dest_square_y: 4,
+            src_x: x,
+            src_y: 0,
+            dest_x: x,
+            dest_y: 4,
           },
         )
       end
@@ -70,151 +72,142 @@ RSpec.describe Move, type: :model do
       end
     end
 
-    describe "dest_square" do
-      let!(:user) { FactoryBot.create(:user) }
-      let!(:game) {
-        FactoryBot.create(:game,
-          pieces: Fen.new(8).to_s,
-          current_turn: 1,
-          pairs: [FactoryBot.create(:pair, white_player: user)],
+    describe "targets" do
+      let(:move) {
+        FactoryBot.build(:move,
+          game: game,
+          src: game.xy_to_idx(4, 4),
         )
       }
 
+      def expect_targets(meth, expected)
+        targets = move.send(meth)
+
+        expect(targets.length).to eq(expected.length)
+        expected.each do |target|
+          expect(targets).to include(Game.xy_to_idx(target[:x], target[:y], 8))
+        end
+      end
+
+      describe "knight" do
+        let(:piece_kind) { KNIGHT }
+
+        specify "get_knight_targets" do
+          expect_targets(:get_knight_targets, [
+            { x: 2, y: 3 },
+            { x: 3, y: 2 },
+            { x: 5, y: 2 },
+            { x: 6, y: 3 },
+            { x: 2, y: 5 },
+            { x: 3, y: 6 },
+            { x: 5, y: 6 },
+            { x: 6, y: 5 },
+          ])
+        end
+      end
+
+      describe "rook" do
+        let(:piece_kind) { ROOK }
+
+        specify "get_rook_targets" do
+          expect_targets(:get_rook_targets, [
+            # up
+            { x: 3, y: 4 },
+            { x: 2, y: 4 },
+            { x: 1, y: 4 },
+            { x: 0, y: 4 },
+            # down
+            { x: 5, y: 4 },
+            { x: 6, y: 4 },
+            { x: 7, y: 4 },
+            # left
+            { x: 4, y: 3 },
+            { x: 4, y: 2 },
+            { x: 4, y: 1 },
+            { x: 4, y: 0 },
+            # right
+            { x: 4, y: 5 },
+            { x: 4, y: 6 },
+            { x: 4, y: 7 },
+          ])
+        end
+      end
+
+      describe "bishop" do
+        let(:piece_kind) { BISHOP }
+
+        specify "get_bishop_targets" do
+          expect_targets(:get_bishop_targets, [
+            # up-left
+            { x: 3, y: 3 },
+            { x: 2, y: 2 },
+            { x: 1, y: 1 },
+            { x: 0, y: 0 },
+            # down-left
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 7, y: 7 },
+            # up-right
+            { x: 5, y: 3 },
+            { x: 6, y: 2 },
+            { x: 7, y: 1 },
+            # down-right
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 7, y: 7 },
+          ])
+        end
+      end
+
+      describe "king" do
+        let(:piece_kind) { KING }
+
+        specify "get_king_targets" do
+          expect_targets(:get_king_targets, [
+            { x: 3, y: 3 },
+            { x: 4, y: 3 },
+            { x: 5, y: 3 },
+            { x: 5, y: 4 },
+            { x: 5, y: 5 },
+            { x: 4, y: 5 },
+            { x: 3, y: 5 },
+            { x: 3, y: 4 },
+          ])
+        end
+      end
+    end
+
+    describe "dest" do
+      let(:fen) { Fen.new(8) }
+
       def add_piece_to_game(piece_kind)
-        square = game.square_at(1, 1)
+        idx = game.xy_to_idx(1, 1)
         fen = game.get_fen
-        # CLEANUP maybe rename team/color to team_in/color_in
-        fen.add_piece(user.team(game), user.color(game), piece_kind, square)
+
+        fen.add_piece(user.team(game), user.color(game), piece_kind, idx)
         game.update!(pieces: fen.to_s)
       end
 
       {
         KNIGHT => {
-          valid: [
-            { x: 0, y: 3 },
-            { x: 2, y: 3 },
-            { x: 3, y: 2 },
-            { x: 3, y: 0 },
-          ],
-          invalid: [
-            { x: 0, y: 0 },
-            { x: 2, y: 1 },
-            { x: 2, y: 2 },
-            { x: 3, y: 1 },
-            { x: 5, y: 5 },
-          ],
+          valid: { x: 0, y: 3 },
+          invalid: { x: 0, y: 0 },
         },
-        ROOK => {
-          valid: [
-            # up
-            { x: 1, y: 0 },
-            # left
-            { x: 0, y: 1 },
-            # right
-            { x: 3, y: 1 },
-            { x: 4, y: 1 },
-            { x: 5, y: 1 },
-            { x: 6, y: 1 },
-            { x: 7, y: 1 },
-            # down
-            { x: 1, y: 3 },
-            { x: 1, y: 4 },
-            { x: 1, y: 5 },
-            { x: 1, y: 6 },
-            { x: 1, y: 7 },
-          ],
-          invalid: [
-            { x: 0, y: 0 },
-            { x: 2, y: 0 },
-            { x: 0, y: 2 },
-            { x: 2, y: 2 },
-            { x: 5, y: 5 },
-          ],
+        ROOK   => {
+          valid: { x: 1, y: 7 },
+          invalid: { x: 0, y: 0 },
         },
         BISHOP => {
-          valid: [
-            # up-left
-            { x: 0, y: 0 },
-            # down-left
-            { x: 0, y: 2 },
-            # up-right
-            { x: 2, y: 0 },
-            # down-right
-            { x: 2, y: 2 },
-            { x: 3, y: 3 },
-            { x: 4, y: 4 },
-            { x: 5, y: 5 },
-            { x: 6, y: 6 },
-            { x: 7, y: 7 },
-          ],
-          invalid: [
-            { x: 1, y: 0 },
-            { x: 0, y: 1 },
-            { x: 1, y: 3 },
-            { x: 3, y: 1 },
-            { x: 5, y: 6 },
-          ],
+          valid: { x: 6, y: 6 },
+          invalid: { x: 5, y: 6 },
         },
-        QUEEN => {
-          valid: [
-            # up
-            { x: 1, y: 0 },
-            # left
-            { x: 0, y: 1 },
-            # right
-            { x: 3, y: 1 },
-            { x: 4, y: 1 },
-            { x: 5, y: 1 },
-            { x: 6, y: 1 },
-            { x: 7, y: 1 },
-            # down
-            { x: 1, y: 3 },
-            { x: 1, y: 4 },
-            { x: 1, y: 5 },
-            { x: 1, y: 6 },
-            { x: 1, y: 7 },
-            # up-left
-            { x: 0, y: 0 },
-            # down-left
-            { x: 0, y: 2 },
-            # up-right
-            { x: 2, y: 0 },
-            # down-right
-            { x: 2, y: 2 },
-            { x: 3, y: 3 },
-            { x: 4, y: 4 },
-            { x: 5, y: 5 },
-            { x: 6, y: 6 },
-            { x: 7, y: 7 },
-          ],
-          invalid: [
-            { x: 0, y: 3 },
-            { x: 2, y: 3 },
-            { x: 3, y: 2 },
-            { x: 3, y: 0 },
-            { x: 5, y: 6 },
-          ],
+        QUEEN  => {
+          valid: { x: 7, y: 1 },
+          invalid: { x: 3, y: 0 },
         },
-        KING => {
-          valid: [
-            { x: 0, y: 0 },
-            { x: 0, y: 1 },
-            { x: 0, y: 2 },
-            { x: 1, y: 2 },
-            { x: 2, y: 2 },
-            { x: 2, y: 1 },
-            { x: 2, y: 0 },
-            { x: 1, y: 0 },
-          ],
-          invalid: [
-            { x: 3, y: 0 },
-            { x: 3, y: 1 },
-            { x: 3, y: 2 },
-            { x: 3, y: 3 },
-            { x: 2, y: 3 },
-            { x: 1, y: 3 },
-            { x: 0, y: 3 },
-          ],
+        KING   => {
+          valid: { x: 0, y: 0 },
+          invalid: { x: 3, y: 0 },
         },
       }.each do |piece_kind, targets|
         def make_move!(x, y)
@@ -222,10 +215,10 @@ RSpec.describe Move, type: :model do
             game: game,
             user: user,
             params: {
-              src_square_x: 1,
-              src_square_y: 1,
-              dest_square_x: x,
-              dest_square_y: y,
+              src_x: 1,
+              src_y: 1,
+              dest_x: x,
+              dest_y: y,
             },
           )
         end
@@ -233,53 +226,33 @@ RSpec.describe Move, type: :model do
         it "#{piece_kind}: valid when dest is a valid target square" do
           add_piece_to_game(piece_kind)
 
-          targets[:valid].each do |target|
-            make_move!(target[:x], target[:y])
-            expect(Move.first.dest_square).to eq((target[:y] * game.board_size) + target[:x])
-          end
+          target = targets[:valid]
+          make_move!(target[:x], target[:y])
+          expect(Move.first.dest).to eq((target[:y] * game.board_size) + target[:x])
         end
 
         it "#{piece_kind}: invalid when dest is not a valid target square" do
           add_piece_to_game(piece_kind)
 
-          targets[:invalid].each do |target|
-            expect {
-              make_move!(target[:x], target[:y])
-            }.to raise_error(ActiveRecord::RecordInvalid, /not a valid target square/)
-          end
+          target = targets[:invalid]
+          expect {
+            make_move!(target[:x], target[:y])
+          }.to raise_error(ActiveRecord::RecordInvalid, /not a valid target square/)
         end
       end
     end
   end
 
   describe "make!" do
-    # CLEANUP duplicated
-    let!(:user) { FactoryBot.create(:user) }
-    let!(:fen) {
-      fen = Fen.new(8)
-      fen.add_piece(TOP, WHITE, ROOK, 0)
-      fen.add_piece(BOTTOM, WHITE, ROOK, 1)
-      fen.add_piece(TOP, BLACK, ROOK, 2)
-      fen.add_piece(BOTTOM, BLACK, ROOK, 3)
-      fen
-    }
-    let!(:game) {
-      FactoryBot.create(:game,
-        pieces: fen.to_s,
-        current_turn: 1,
-        pairs: [FactoryBot.create(:pair, white_player: user)],
-      )
-    }
-
     def make_move!(x, dest_y)
       Move.make!(
         game: game,
         user: user,
         params: {
-          src_square_x: x,
-          src_square_y: 0,
-          dest_square_x: x,
-          dest_square_y: dest_y,
+          src_x: x,
+          src_y: 0,
+          dest_x: x,
+          dest_y: dest_y,
         },
       )
     end
@@ -299,7 +272,7 @@ RSpec.describe Move, type: :model do
 
       expect {
         make_move!(0, 3)
-      }.to change { Move.first.dest_square }
+      }.to change { Move.first.dest }
         .from(4 * game.board_size)
         .to(3 * game.board_size)
     end

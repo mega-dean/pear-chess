@@ -9,7 +9,7 @@ class MovesController < ApplicationController
         Move.make!(
           game: game,
           user: current_user,
-          params: move_params.slice(:src_square_x, :src_square_y, :dest_square_x, :dest_square_y),
+          params: move_params.slice(:src_x, :src_y, :dest_x, :dest_y),
         )
       end
     end
@@ -29,6 +29,6 @@ class MovesController < ApplicationController
   private
 
   def move_params
-    params.require(:move).permit(:game_id, :color, :src_square_x, :src_square_y, :dest_square_x, :dest_square_y)
+    params.require(:move).permit(:game_id, :color, :src_x, :src_y, :dest_x, :dest_y)
   end
 end

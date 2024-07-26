@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_19_174419) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_26_182945) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,8 +28,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_174419) do
     t.bigint "user_id"
     t.bigint "game_id"
     t.integer "turn"
-    t.integer "src_square"
-    t.integer "dest_square"
+    t.integer "src"
+    t.integer "dest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_moves_on_game_id"

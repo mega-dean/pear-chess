@@ -53,10 +53,10 @@ export default class extends Controller {
       const params = {
         game_id: this.gameIdValue,
         color: this.selectedPieceColorValue,
-        src_square_x: this.selectedPieceXValue,
-        src_square_y: this.selectedPieceYValue,
-        dest_square_x: squareX,
-        dest_square_y: squareY,
+        src_x: this.selectedPieceXValue,
+        src_y: this.selectedPieceYValue,
+        dest_x: squareX,
+        dest_y: squareY,
       };
       deselectPiece();
       this.postJson("/moves", params);

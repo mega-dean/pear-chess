@@ -5,32 +5,32 @@ class Move < ApplicationRecord
   belongs_to :game
 
   validates :turn, presence: true
-  validates :src_square, presence: true
-  validates :dest_square, presence: true
+  validates :src, presence: true
+  validates :dest, presence: true
   validate :src_is_valid_piece
   validate :dest_is_valid_target
 
   class << self
     def make!(game:, user:, params:)
-      src_square = (params[:src_square_y].to_i * game.board_size) + params[:src_square_x].to_i
-      dest_square = (params[:dest_square_y].to_i * game.board_size) + params[:dest_square_x].to_i
+      src_idx = game.xy_to_idx(params[:src_x].to_i, params[:src_y].to_i)
+      dest_idx = game.xy_to_idx(params[:dest_x].to_i, params[:dest_y].to_i)
 
       existing_move = Move.find_by(
         game: game,
         turn: game.current_turn,
         user: user,
-        src_square: src_square,
+        src: src_idx,
       )
 
       if existing_move
-        existing_move.update!(dest_square: dest_square)
+        existing_move.update!(dest: dest_idx)
       else
         Move.create!(
           game: game,
           turn: game.current_turn,
           user: user,
-          src_square: src_square,
-          dest_square: dest_square,
+          src: src_idx,
+          dest: dest_idx,
         )
       end
     end
@@ -39,76 +39,73 @@ class Move < ApplicationRecord
   private
 
   def src_is_valid_piece
-    src_x = self.src_square % self.game.board_size
-    src_y = self.src_square / self.game.board_size
+    src_x, src_y = self.src_xy
     team, color, _ = self.get_piece
 
     if !team
-      errors.add(:src_square, "no piece at (#{src_x}, #{src_y})")
+      errors.add(:src, "no piece at (#{src_x}, #{src_y})")
     else
       if team != self.user.team(self.game)
-        errors.add(:src_square, "not the user's team")
+        errors.add(:src, "not the user's team")
       end
 
       if self.game.pairs.count == 2
         if color != self.user.color(self.game)
-          errors.add(:src_square, "not the user's color")
+          errors.add(:src, "not the user's color")
         end
       end
 
       if color != self.game.current_color
-        errors.add(:src_square, "not the user's turn")
+        errors.add(:src, "not the user's turn")
       end
     end
   end
 
-  def get_knight_moves
-    src_x = self.src_square % self.game.board_size
-    src_y = self.src_square / self.game.board_size
+  def get_knight_targets
+    src_x, src_y = self.src_xy
 
     [
-      self.game.square_at(src_x + 1, src_y + 2),
-      self.game.square_at(src_x + 1, src_y - 2),
-      self.game.square_at(src_x - 1, src_y + 2),
-      self.game.square_at(src_x - 1, src_y - 2),
-      self.game.square_at(src_x + 2, src_y + 1),
-      self.game.square_at(src_x + 2, src_y - 1),
-      self.game.square_at(src_x - 2, src_y + 1),
-      self.game.square_at(src_x - 2, src_y - 1),
+      self.game.xy_to_idx(src_x + 1, src_y + 2),
+      self.game.xy_to_idx(src_x + 1, src_y - 2),
+      self.game.xy_to_idx(src_x - 1, src_y + 2),
+      self.game.xy_to_idx(src_x - 1, src_y - 2),
+      self.game.xy_to_idx(src_x + 2, src_y + 1),
+      self.game.xy_to_idx(src_x + 2, src_y - 1),
+      self.game.xy_to_idx(src_x - 2, src_y + 1),
+      self.game.xy_to_idx(src_x - 2, src_y - 1),
     ]
   end
 
-  def get_rook_moves
-    up = get_moves_in_direction({ y: -1 })
-    down = get_moves_in_direction({ y: 1 })
-    left = get_moves_in_direction({ x: -1 })
-    right = get_moves_in_direction({ x: 1 })
+  def get_rook_targets
+    up = get_targets_in_direction({ y: -1 })
+    down = get_targets_in_direction({ y: 1 })
+    left = get_targets_in_direction({ x: -1 })
+    right = get_targets_in_direction({ x: 1 })
 
     up + down + left + right
   end
 
-  def get_bishop_moves
-    up_left = get_moves_in_direction({ x: -1, y: -1 })
-    down_left = get_moves_in_direction({ x: -1, y: 1 })
-    up_right = get_moves_in_direction({ x: 1, y: -1 })
-    down_right = get_moves_in_direction({ x: 1, y: 1 })
+  def get_bishop_targets
+    up_left = get_targets_in_direction({ x: -1, y: -1 })
+    down_left = get_targets_in_direction({ x: -1, y: 1 })
+    up_right = get_targets_in_direction({ x: 1, y: -1 })
+    down_right = get_targets_in_direction({ x: 1, y: 1 })
 
     up_left + down_left + up_right + down_right
   end
 
-  def get_king_moves
-    src_x = self.src_square % self.game.board_size
-    src_y = self.src_square / self.game.board_size
+  def get_king_targets
+    src_x, src_y = self.src_xy
 
     [
-      self.game.square_at(src_x - 1, src_y - 1),
-      self.game.square_at(src_x - 1, src_y + 1),
-      self.game.square_at(src_x + 1, src_y - 1),
-      self.game.square_at(src_x + 1, src_y + 1),
-      self.game.square_at(src_x + 0, src_y - 1),
-      self.game.square_at(src_x + 0, src_y + 1),
-      self.game.square_at(src_x - 1, src_y + 0),
-      self.game.square_at(src_x + 1, src_y - 0),
+      self.game.xy_to_idx(src_x - 1, src_y - 1),
+      self.game.xy_to_idx(src_x - 1, src_y + 1),
+      self.game.xy_to_idx(src_x + 1, src_y - 1),
+      self.game.xy_to_idx(src_x + 1, src_y + 1),
+      self.game.xy_to_idx(src_x + 0, src_y - 1),
+      self.game.xy_to_idx(src_x + 0, src_y + 1),
+      self.game.xy_to_idx(src_x - 1, src_y + 0),
+      self.game.xy_to_idx(src_x + 1, src_y - 0),
     ]
   end
 
@@ -117,55 +114,54 @@ class Move < ApplicationRecord
       0 <= target[:y] && target[:y] < self.game.board_size
   end
 
-  def get_moves_in_direction(delta)
-    moves = []
-    src_x = self.src_square % self.game.board_size
-    src_y = self.src_square / self.game.board_size
+  def get_targets_in_direction(delta)
+    targets = []
 
-    target = {
-      x: src_x + (delta[:x] || 0),
-      y: src_y + (delta[:y] || 0),
-    }
+    delta_x = delta[:x] || 0
+    delta_y = delta[:y] || 0
+    src_x, src_y = self.src_xy
+
+    target = { x: src_x + delta_x, y: src_y + delta_y }
 
     while on_board(target)
-      square = (self.game.board_size * target[:y]) + target[:x]
-      moves << square
+      targets << self.game.xy_to_idx(target[:x], target[:y])
 
-      target[:x] += (delta[:x] || 0)
-      target[:y] += (delta[:y] || 0)
+      target[:x] += delta_x
+      target[:y] += delta_y
     end
 
-    moves
+    targets
   end
 
   def dest_is_valid_target
     _, _, piece_kind = self.get_piece
 
     valid_target_squares = {
-      KNIGHT => -> { self.get_knight_moves },
-      ROOK => -> { self.get_rook_moves },
-      BISHOP => -> { self.get_bishop_moves },
-      QUEEN => -> { self.get_rook_moves + self.get_bishop_moves },
-      KING => -> { self.get_king_moves },
+      KNIGHT => -> { self.get_knight_targets },
+      ROOK   => -> { self.get_rook_targets },
+      BISHOP => -> { self.get_bishop_targets },
+      QUEEN  => -> { self.get_rook_targets + self.get_bishop_targets },
+      KING   => -> { self.get_king_targets },
     }[piece_kind]&.call() || []
 
-    def on_board_(square)
-      0 <= square && square <= self.game.board_size**2
+    target_squares_on_board = valid_target_squares.filter do |square|
+      x, y = self.game.idx_to_xy(square)
+      on_board({ x: x, y: y })
     end
 
-    valid_target_squares_ = valid_target_squares.filter { |square| on_board_(square) }
-
-    if !valid_target_squares_.include?(self.dest_square)
-      errors.add(:dest_square, "not a valid target square for a #{piece_kind}")
+    if !target_squares_on_board.include?(self.dest)
+      errors.add(:dest, "not a valid target square for a #{piece_kind}")
     end
   end
 
-  def get_piece
-    src_x = self.src_square % self.game.board_size
-    src_y = self.src_square / self.game.board_size
-    fen = Fen.from_s(self.game.pieces)
-    char = fen.to_squares[src_y][src_x]
+  def src_xy
+    game.idx_to_xy(src)
+  end
 
-    fen.get_piece(char)
+  def get_piece
+    src_x, src_y = self.src_xy
+    fen = Fen.from_s(self.game.pieces)
+
+    fen.get_piece_at(src_x, src_y)
   end
 end

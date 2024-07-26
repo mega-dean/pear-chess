@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "clearance/rspec"
 
 RSpec.describe "Games", type: :request do
   describe "param validation when creating Game" do

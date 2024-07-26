@@ -43,6 +43,14 @@ class Game < ApplicationRecord
         play_as: [WHITE, BLACK, RANDOM],
       }
     end
+
+    def xy_to_idx(x, y, board_size)
+      new(board_size: board_size).xy_to_idx(x, y)
+    end
+
+    def idx_to_xy(idx, board_size)
+      new(board_size: board_size).idx_to_xy(idx)
+    end
   end
 
   def broadcast_fen(locals)
@@ -60,13 +68,9 @@ class Game < ApplicationRecord
     end
   end
 
-  def square_at(x, y)
-    (y * board_size) + x
-  end
-
   def initial_pieces
     {
-      8 => [
+      8  => [
         "KRN2nrk",
         "IIN2nii",
         "NNN2nnn",
@@ -139,7 +143,7 @@ class Game < ApplicationRecord
     }[self.pairs.count] || raise(NotSupportedYet, "can't have more than 2 pairs (got #{self.pairs.count})")
 
     {
-      TOP => top_players.compact,
+      TOP    => top_players.compact,
       BOTTOM => bottom_players.compact,
     }
   end
@@ -152,6 +156,14 @@ class Game < ApplicationRecord
         BLACK
       end
     end
+  end
+
+  def idx_to_xy(idx)
+    [idx % board_size, idx / board_size]
+  end
+
+  def xy_to_idx(x, y)
+    (y * board_size) + x
   end
 
   private

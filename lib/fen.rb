@@ -26,16 +26,16 @@ class Fen
   def add_piece(team, color, piece_kind, square)
     new_value = begin
       char = {
-        [TOP, KNIGHT] => "n",
-        [TOP, BISHOP] => "i",
-        [TOP, ROOK] => "r",
-        [TOP, QUEEN] => "q",
-        [TOP, KING] => "k",
+        [TOP, KNIGHT]    => "n",
+        [TOP, BISHOP]    => "i",
+        [TOP, ROOK]      => "r",
+        [TOP, QUEEN]     => "q",
+        [TOP, KING]      => "k",
         [BOTTOM, KNIGHT] => "m",
         [BOTTOM, BISHOP] => "j",
-        [BOTTOM, ROOK] => "s",
-        [BOTTOM, QUEEN] => "u",
-        [BOTTOM, KING] => "l",
+        [BOTTOM, ROOK]   => "s",
+        [BOTTOM, QUEEN]  => "u",
+        [BOTTOM, KING]   => "l",
       }[[team, piece_kind]]
 
       {
@@ -79,6 +79,11 @@ class Fen
       "u" => [BOTTOM, BLACK, QUEEN],
       "l" => [BOTTOM, BLACK, KING],
     }[char]
+  end
+
+  def get_piece_at(x, y)
+    char = self.to_squares[y][x]
+    self.get_piece(char)
   end
 
   private

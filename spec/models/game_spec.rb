@@ -102,7 +102,7 @@ RSpec.describe Game, type: :model do
       game.pairs.sole!.update!(white_player: opponent1)
 
       expect(game.reload.teams).to eq({
-        TOP => [opponent1.id],
+        TOP    => [opponent1.id],
         BOTTOM => [user.id],
       })
     end
@@ -115,7 +115,7 @@ RSpec.describe Game, type: :model do
       game.pairs.last.update!(black_player: opponent2)
 
       expect(game.reload.teams).to eq({
-        TOP => [opponent1.id, opponent2.id],
+        TOP    => [opponent1.id, opponent2.id],
         BOTTOM => [user.id, teammate.id],
       })
     end
@@ -124,7 +124,7 @@ RSpec.describe Game, type: :model do
       game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
 
       expect(game.reload.teams).to eq({
-        TOP => [],
+        TOP    => [],
         BOTTOM => [user.id],
       })
     end

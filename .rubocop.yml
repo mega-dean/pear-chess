@@ -55,6 +55,8 @@ Layout/SpaceInsidePercentLiteralDelimiters:
   Enabled: true
 Layout/TrailingEmptyLines:
   Enabled: true
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
 
 Lint/AmbiguousAssignment:
   Enabled: true
