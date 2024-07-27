@@ -182,7 +182,7 @@ RSpec.describe Move, type: :model do
 
       def add_piece_to_game(piece_kind)
         idx = game.xy_to_idx(1, 1)
-        fen = game.get_fen
+        fen = game.fen
 
         fen.add_piece(user.team(game), user.color(game), piece_kind, idx)
         game.update!(pieces: fen.to_s)

@@ -84,6 +84,24 @@ RSpec.describe Game, type: :model do
     end
   end
 
+  describe "current_color" do
+    let(:game) { FactoryBot.create(:game) }
+
+    it "is nil when the game hasn't started yet" do
+      expect(game.current_color).to be(nil)
+    end
+
+    it "is WHITE when the current_turn is odd" do
+      game.update!(current_turn: 5)
+      expect(game.current_color).to be(WHITE)
+    end
+
+    it "is BLACK when the current_turn is even" do
+      game.update!(current_turn: 10)
+      expect(game.current_color).to be(BLACK)
+    end
+  end
+
   describe "teams" do
     let(:user) { FactoryBot.create(:user) }
     let(:teammate) { FactoryBot.create(:user) }

@@ -5,13 +5,11 @@ class MovesController < ApplicationController
     game = Game.find(move_params[:game_id])
 
     if current_user.playing_in?(game)
-      if game.current_color == move_params[:color]
-        Move.make!(
-          game: game,
-          user: current_user,
-          params: move_params.slice(:src_x, :src_y, :dest_x, :dest_y),
-        )
-      end
+      Move.make!(
+        game: game,
+        user: current_user,
+        params: move_params.slice(:src_x, :src_y, :dest_x, :dest_y),
+      )
     end
 
     # The move may not be created in the following cases:

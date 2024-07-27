@@ -1,6 +1,6 @@
 <div id="board-container">
   <%
-  fen = Fen.from_s(game.pieces)
+  fen = game.fen
   board_size = game.board_size
   squares = fen.to_squares
   current_team = current_user.team(game)

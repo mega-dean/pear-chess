@@ -4,20 +4,6 @@ require "rails_helper"
 
 RSpec.describe "Games", type: :request do
   describe "param validation when creating Game" do
-    def sign_in
-      user = FactoryBot.create(:user)
-
-      params = {
-        session: {
-          username: user.username,
-          password: user.password,
-        },
-      }
-
-      post session_path(params)
-      user
-    end
-
     let(:game_params) {
       {
         number_of_players: 2,
@@ -29,15 +15,7 @@ RSpec.describe "Games", type: :request do
 
     before do
       user = FactoryBot.create(:user)
-
-      params = {
-        session: {
-          username: user.username,
-          password: user.password,
-        },
-      }
-
-      post session_path(params)
+      sign_in(user)
     end
 
     it "validates number_of_players" do

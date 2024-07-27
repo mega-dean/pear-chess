@@ -7,6 +7,7 @@ class Move < ApplicationRecord
   validates :turn, presence: true
   validates :src, presence: true
   validates :dest, presence: true
+
   validate :src_is_valid_piece
   validate :dest_is_valid_target
 
@@ -160,7 +161,7 @@ class Move < ApplicationRecord
 
   def get_piece
     src_x, src_y = self.src_xy
-    fen = Fen.from_s(self.game.pieces)
+    fen = self.game.fen
 
     fen.get_piece_at(src_x, src_y)
   end

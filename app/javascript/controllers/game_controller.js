@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { utils } from "./utils"
 
 export default class extends Controller {
   static values = {
@@ -59,7 +60,7 @@ export default class extends Controller {
         dest_y: squareY,
       };
       deselectPiece();
-      this.postJson("/moves", params);
+      utils.postJson("/moves", params);
     };
 
     if (clickedSquareHasPiece()) {
@@ -179,19 +180,5 @@ export default class extends Controller {
     }
 
     return moves;
-  }
-
-  // CLEANUP move to utils.js
-  postJson(url, body) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
-      },
-      body: JSON.stringify(body),
-    });
   }
 }

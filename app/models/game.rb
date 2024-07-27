@@ -62,7 +62,7 @@ class Game < ApplicationRecord
     )
   end
 
-  def get_fen
+  def fen
     if self.pieces
       Fen.from_s(self.pieces)
     end
@@ -70,46 +70,13 @@ class Game < ApplicationRecord
 
   def initial_pieces
     {
-      8  => [
-        "KRN2nrk",
-        "IIN2nii",
-        "NNN2nnn",
-        "8",
-        "8",
-        "MMM2mmm",
-        "JJM2mjj",
-        "LSM2msl",
-      ].join("/"),
-      10 => [
-        "KQRN2nrqk",
-        "IRNN2nnri",
-        "INN4nni",
-        "NN6nn",
-        "a",
-        "a",
-        "MM6mm",
-        "JMM4mmj",
-        "JSMM2mmsj",
-        "LUSM2msul",
-      ].join("/"),
-      12 => [
-        "KQIRN2nriqk",
-        "IIRNN2nnrii",
-        "IINN4nnii",
-        "INN6nni",
-        "NN8nn",
-        "c",
-        "c",
-        "MM8mm",
-        "JMM6mmj",
-        "JJMM4mmjj",
-        "JJSMM2mmsjj",
-        "LUJSM2msjul",
-      ].join("/"),
+      8  => "KRN2nrk/IIN2nii/NNN2nnn/8/8/MMM2mmm/JJM2mjj/LSM2msl",
+      10 => "KQRN2nrqk/IRNN2nnri/INN4nni/NN6nn/a/a/MM6mm/JMM4mmj/JSMM2mmsj/LUSM2msul",
+      12 => "KQIRN2nriqk/IIRNN2nnrii/IINN4nnii/INN6nni/NN8nn/c/c/MM8mm/JMM6mmj/JJMM4mmjj/JJSMM2mmsjj/LUJSM2msjul",
     }[self.board_size]
   end
 
-  def start
+  def start!
     self.update!(
       current_turn: 1,
       pieces: self.initial_pieces,

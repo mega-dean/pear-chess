@@ -19,8 +19,10 @@ class User < ApplicationRecord
 
   def color(game)
     if game.pairs.count == 1
-      # If the game is only 2-player, then each player plays as both white and black.
-      WHITE
+      if [game.pairs.first.white_player_id, game.pairs.first.black_player_id].include?(self.id)
+        # If the game is only 2-player, then each player plays as both white and black.
+        WHITE
+      end
     else
       game.pairs.each do |pair|
         if pair.white_player_id == self.id

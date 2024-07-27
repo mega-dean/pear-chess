@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { utils } from "./utils"
 
 export default class extends Controller {
   static values = {
@@ -21,7 +22,7 @@ export default class extends Controller {
       });
     }
 
-    this.postJson("/fen_tool_update", params);
+    utils.postJson("/fen_tool_update", params);
   }
 
   selectPiece(event) {
@@ -43,18 +44,5 @@ export default class extends Controller {
       this.teamValue = event.target.dataset.team;
       this.pieceKindValue = event.target.dataset.pieceKind;
     }
-  }
-
-  postJson(url, body) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
-      },
-      body: JSON.stringify(body),
-    });
   }
 }
