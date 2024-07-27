@@ -5,8 +5,8 @@ class CreateMoves < ActiveRecord::Migration[7.1]
       t.belongs_to :game
 
       t.integer :turn
-      t.integer :src_square
-      t.integer :dest_square
+      t.integer :src
+      t.integer :dest
 
       t.timestamps
     end

@@ -10,18 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_26_182945) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_174419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
     t.integer "turn_duration"
     t.integer "current_turn"
+    t.bigint "top_white_player_id"
+    t.bigint "top_black_player_id"
+    t.bigint "bottom_white_player_id"
+    t.bigint "bottom_black_player_id"
     t.integer "board_size"
     t.string "pieces"
     t.boolean "processing_moves"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["bottom_black_player_id"], name: "index_games_on_bottom_black_player_id"
+    t.index ["bottom_white_player_id"], name: "index_games_on_bottom_white_player_id"
+    t.index ["top_black_player_id"], name: "index_games_on_top_black_player_id"
+    t.index ["top_white_player_id"], name: "index_games_on_top_white_player_id"
   end
 
   create_table "moves", force: :cascade do |t|
@@ -60,6 +68,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_182945) do
     t.index ["remember_token"], name: "index_users_on_remember_token", unique: true
   end
 
+  add_foreign_key "games", "users", column: "bottom_black_player_id"
+  add_foreign_key "games", "users", column: "bottom_white_player_id"
+  add_foreign_key "games", "users", column: "top_black_player_id"
+  add_foreign_key "games", "users", column: "top_white_player_id"
   add_foreign_key "pairs", "users", column: "black_player_id"
   add_foreign_key "pairs", "users", column: "white_player_id"
 end

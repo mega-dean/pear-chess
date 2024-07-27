@@ -4,6 +4,11 @@ class CreateGames < ActiveRecord::Migration[7.1]
       t.integer :turn_duration # in seconds
       t.integer :current_turn
 
+      t.references :top_white_player, index: true, foreign_key: { to_table: :users }
+      t.references :top_black_player, index: true, foreign_key: { to_table: :users }
+      t.references :bottom_white_player, index: true, foreign_key: { to_table: :users }
+      t.references :bottom_black_player, index: true, foreign_key: { to_table: :users }
+
       # This assumes width == height, but that might change.
       t.integer :board_size
 
