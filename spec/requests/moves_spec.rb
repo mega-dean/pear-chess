@@ -16,7 +16,7 @@ RSpec.describe "Moves", type: :request do
           src_y: 0,
           dest_x: 1,
           dest_y: 0,
-        }
+        },
       }
     }
 
