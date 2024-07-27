@@ -51,6 +51,12 @@ class Game < ApplicationRecord
     def idx_to_xy(idx, board_size)
       new(board_size: board_size).idx_to_xy(idx)
     end
+
+    if Rails.env.development?
+      def dev_game_ids
+        []
+      end
+    end
   end
 
   def broadcast_fen(locals)

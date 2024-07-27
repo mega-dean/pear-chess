@@ -20,6 +20,7 @@ class FenToolController < ApplicationController
         @fen.remove_piece(params[:square].to_i)
       end
 
+      # TODO this can respond_to format.turbo_stream instead of calling a method on dummy game
       Game.new.broadcast_fen({
         fen: @fen,
         selected_color: params[:color],

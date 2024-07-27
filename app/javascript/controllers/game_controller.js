@@ -63,6 +63,8 @@ export default class extends Controller {
       utils.postJson("/moves", params);
     };
 
+    // TODO if a square is a valid target move and also has a piece, it should be interpreted as clicking the making
+    // the target move, not selecting the new piece
     if (clickedSquareHasPiece()) {
       if (clickedPieceIsAlreadySelected()) {
         deselectPiece();

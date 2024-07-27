@@ -18,10 +18,16 @@
       </div>
 
       <% if Rails.env.development? %>
+        <div id="dev-games">
+          <% Game.dev_game_ids.each do |id| %>
+            <%= link_to(id, Game.find(id)) %>
+          <% end %>
+        </div>
+
         <div id="fen-tool-links">
-          <%= link_to("fen tool (8)", fen_tool_path(size: 8)) %>
-          <%= link_to("fen tool (10)", fen_tool_path(size: 10)) %>
-          <%= link_to("fen tool (12)", fen_tool_path(size: 12)) %>
+          <% Game.valid_form_options[:board_size].each do |size| %>
+            <%= link_to("fen tool (#{size})", fen_tool_path(size: size)) %>
+          <% end %>
         </div>
       <% end %>
 
