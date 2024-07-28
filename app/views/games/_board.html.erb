@@ -5,9 +5,13 @@
   squares = fen.to_squares
   current_team = current_user.team(game)
   current_color = game.current_color
-  user_color = current_user.colors(game).first
+  # For 2-player games, treat the player as WHITE (ie. don't reflect x).
+  user_color = if game.players.count == 2
+    WHITE
+  else
+    current_user.colors(game).first
+  end
   %>
-  <%= current_team %>
   <div id="game-board"
        data-controller="game"
        data-game-board-size-value="<%= board_size %>"
@@ -29,6 +33,7 @@
             WHITE => rendered_x,
             BLACK => (board_size - 1) - rendered_x,
           }[user_color] || rendered_x
+
           span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
           team, color, piece_kind = fen.get_piece(squares[y][x])
           %>

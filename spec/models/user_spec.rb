@@ -3,13 +3,6 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  let(:game_params) {
-    {
-      board_size: 8,
-      turn_duration: 15,
-      number_of_players: 2,
-    }
-  }
   let(:user) { FactoryBot.create(:user) }
 
   describe "team" do
@@ -34,12 +27,10 @@ RSpec.describe User, type: :model do
     end
 
     it "contains the user's color for a 4-player game" do
-      game_params[:number_of_players] = 4
-
-      game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
+      game = Game.new(bottom_white_player: user)
       expect(user.colors(game)).to eq([WHITE])
 
-      game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
+      game = Game.new(bottom_black_player: user)
       expect(user.colors(game)).to eq([BLACK])
     end
   end

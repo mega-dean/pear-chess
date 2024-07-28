@@ -20,6 +20,46 @@ RSpec.describe Game, type: :model do
 
       expect(game.current_turn).to be(0)
     end
+
+    describe "player ids" do
+      let(:game) { Game.new(board_size: 10, turn_duration: 10) }
+
+      it "is invalid if the top_white_player is also on BOTTOM" do
+        game.top_white_player_id = 1
+        game.bottom_white_player_id = 1
+
+        expect {
+          game.save!
+        }.to raise_error(ActiveRecord::RecordInvalid, /is also on BOTTOM/)
+      end
+
+      it "is invalid if the top_black_player is also on BOTTOM" do
+        game.top_black_player_id = 1
+        game.bottom_white_player_id = 1
+
+        expect {
+          game.save!
+        }.to raise_error(ActiveRecord::RecordInvalid, /is also on BOTTOM/)
+      end
+
+      it "is invalid if the bottom_white_player is also on TOP" do
+        game.bottom_white_player_id = 1
+        game.top_white_player_id = 1
+
+        expect {
+          game.save!
+        }.to raise_error(ActiveRecord::RecordInvalid, /is also on TOP/)
+      end
+
+      it "is invalid if the bottom_black_player is also on TOP" do
+        game.bottom_black_player_id = 1
+        game.top_white_player_id = 1
+
+        expect {
+          game.save!
+        }.to raise_error(ActiveRecord::RecordInvalid, /is also on TOP/)
+      end
+    end
   end
 
   describe "make!" do

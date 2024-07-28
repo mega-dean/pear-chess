@@ -10,6 +10,7 @@ class Game < ApplicationRecord
   belongs_to :bottom_white_player, class_name: "User", optional: true
   belongs_to :bottom_black_player, class_name: "User", optional: true
 
+  validate :player_cannot_be_on_opposite_teams
 
   attribute :current_turn, default: 0
 
@@ -133,5 +134,29 @@ class Game < ApplicationRecord
 
   def xy_to_idx(x, y)
     (y * board_size) + x
+  end
+
+  private
+
+  def player_cannot_be_on_opposite_teams
+    [:top_white_player_id, :top_black_player_id].each do |top_player_id_column|
+      player_id = self.send(top_player_id_column)
+
+      if player_id
+        if [bottom_white_player_id, bottom_black_player_id].include?(player_id)
+          errors.add(top_player_id_column, "is also on BOTTOM")
+        end
+      end
+    end
+
+    [:bottom_white_player_id, :bottom_black_player_id].each do |bottom_player_id_column|
+      player_id = self.send(bottom_player_id_column)
+
+      if player_id
+        if [top_white_player_id, top_black_player_id].include?(player_id)
+          errors.add(bottom_player_id_column, "is also on TOP")
+        end
+      end
+    end
   end
 end
