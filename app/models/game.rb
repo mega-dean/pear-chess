@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class Game < ApplicationRecord
-  validates :turn_duration, presence: true
-  validates :board_size, presence: true
+  VALID_TURN_DURATIONS = [5, 10, 15].freeze
+  VALID_BOARD_SIZES = [8, 10, 12].freeze
+
+  validates :turn_duration, presence: true, inclusion: { in: VALID_TURN_DURATIONS }
+  validates :board_size, presence: true, inclusion: { in: VALID_BOARD_SIZES }
   validates :current_turn, presence: true
 
   belongs_to :top_white_player, class_name: "User", optional: true
@@ -47,8 +50,8 @@ class Game < ApplicationRecord
     def valid_form_options
       {
         number_of_players: [2, 4],
-        board_size: [8, 10, 12],
-        turn_duration: [5, 10, 15],
+        board_size: VALID_BOARD_SIZES,
+        turn_duration: VALID_TURN_DURATIONS,
         play_as: [WHITE, BLACK, RANDOM],
       }
     end

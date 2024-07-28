@@ -322,3 +322,5 @@ Style/TrailingUnderscoreVariable:
   Enabled: false
 Style/YodaCondition:
   Enabled: false
+Style/Next:
+  Enabled: false

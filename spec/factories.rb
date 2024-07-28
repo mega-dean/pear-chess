@@ -8,8 +8,8 @@ FactoryBot.define do
   end
 
   factory :game do
-    turn_duration { 10 }
-    board_size { 8 }
+    turn_duration { Game::VALID_TURN_DURATIONS.first }
+    board_size { Game::VALID_BOARD_SIZES.first }
 
     association :top_white_player, factory: :user
     association :top_black_player, factory: :user

@@ -4,60 +4,69 @@ require "rails_helper"
 
 RSpec.describe Game, type: :model do
   describe "validations" do
-    [
-      :turn_duration,
-      :board_size,
-    ].each do |field|
-      it "requires #{field} to be present" do
-        game = FactoryBot.build(:game, field => nil)
+    let(:game) { FactoryBot.build(:game) }
 
-        expect(game.valid?).to be(false)
-      end
+    def expect_validation_error(msg)
+      expect {
+        game.save!
+      }.to raise_error(ActiveRecord::RecordInvalid, msg)
+    end
+
+    it "is valid with all valid fields" do
+      expect(game.valid?).to be(true)
+    end
+
+    it "requires turn_duration to be present" do
+      game.turn_duration = nil
+      expect_validation_error(/Turn duration can't be blank/)
+    end
+
+    it "requires turn_duration to be in VALID_TURN_DURATIONS" do
+      game.turn_duration = 16
+      expect_validation_error(/Turn duration is not included in the list/)
+    end
+
+    it "requires board_size to be present" do
+      game.board_size = nil
+      expect_validation_error(/Board size can't be blank/)
+    end
+
+    it "requires board_size to be in VALID_BOARD_SIZES" do
+      game.board_size = 13
+      expect_validation_error(/Board size is not included in the list/)
     end
 
     it "defaults current_turn to 0" do
-      game = Game.new
-
       expect(game.current_turn).to be(0)
     end
 
     describe "player ids" do
-      let(:game) { Game.new(board_size: 10, turn_duration: 10) }
-
       it "is invalid if the top_white_player is also on BOTTOM" do
         game.top_white_player_id = 1
         game.bottom_white_player_id = 1
 
-        expect {
-          game.save!
-        }.to raise_error(ActiveRecord::RecordInvalid, /is also on BOTTOM/)
+        expect_validation_error(/Top white player is also on BOTTOM/)
       end
 
       it "is invalid if the top_black_player is also on BOTTOM" do
         game.top_black_player_id = 1
         game.bottom_white_player_id = 1
 
-        expect {
-          game.save!
-        }.to raise_error(ActiveRecord::RecordInvalid, /is also on BOTTOM/)
+        expect_validation_error(/Top black player is also on BOTTOM/)
       end
 
       it "is invalid if the bottom_white_player is also on TOP" do
         game.bottom_white_player_id = 1
         game.top_white_player_id = 1
 
-        expect {
-          game.save!
-        }.to raise_error(ActiveRecord::RecordInvalid, /is also on TOP/)
+        expect_validation_error(/Bottom white player is also on TOP/)
       end
 
       it "is invalid if the bottom_black_player is also on TOP" do
         game.bottom_black_player_id = 1
         game.top_white_player_id = 1
 
-        expect {
-          game.save!
-        }.to raise_error(ActiveRecord::RecordInvalid, /is also on TOP/)
+        expect_validation_error(/Bottom black player is also on TOP/)
       end
     end
   end
@@ -73,9 +82,7 @@ RSpec.describe Game, type: :model do
       }
     }
 
-    let(:game) {
-      Game.make!(creator: user, game_params: params)
-    }
+    let(:game) { Game.make!(creator: user, game_params: params) }
 
     it "creates a game with the given params" do
       expect(game.board_size).to eq(params[:board_size])
