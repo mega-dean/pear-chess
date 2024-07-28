@@ -4,14 +4,12 @@ class Game < ApplicationRecord
   validates :turn_duration, presence: true
   validates :board_size, presence: true
   validates :current_turn, presence: true
-  validate :pairs_have_unique_players
 
   belongs_to :top_white_player, class_name: "User", optional: true
   belongs_to :top_black_player, class_name: "User", optional: true
   belongs_to :bottom_white_player, class_name: "User", optional: true
   belongs_to :bottom_black_player, class_name: "User", optional: true
 
-  has_many :pairs, dependent: :destroy
 
   attribute :current_turn, default: 0
 
@@ -135,29 +133,5 @@ class Game < ApplicationRecord
 
   def xy_to_idx(x, y)
     (y * board_size) + x
-  end
-
-  private
-
-  def pairs_have_unique_players
-    player_ids = Set.new
-
-    self.pairs.each do |pair|
-      if pair.white_player_id
-        if player_ids.include?(pair.white_player_id)
-          errors.add(:base, "Pair #{pair.id}: white_player_id #{pair.white_player_id} is already part of this game")
-        else
-          player_ids.add(pair.white_player_id)
-        end
-      end
-
-      if pair.black_player_id
-        if player_ids.include?(pair.black_player_id)
-          errors.add(:base, "Pair #{pair.id}: black_player_id #{pair.black_player_id} is already part of this game")
-        else
-          player_ids.add(pair.black_player_id)
-        end
-      end
-    end
   end
 end

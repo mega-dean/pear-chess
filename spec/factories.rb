@@ -17,11 +17,6 @@ FactoryBot.define do
     association :bottom_black_player, factory: :user
   end
 
-  factory :pair do
-    association :game
-    association :white_player, factory: :user
-    association :black_player, factory: :user
-  end
 
   factory :move do
     association :game
