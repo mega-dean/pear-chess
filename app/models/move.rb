@@ -51,7 +51,7 @@ class Move < ApplicationRecord
       end
 
       if self.game.pairs.count == 2
-        if color != self.user.color(self.game)
+        if !self.user.colors(self.game).include?(color)
           errors.add(:src, "not the user's color")
         end
       end

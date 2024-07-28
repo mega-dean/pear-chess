@@ -12,31 +12,35 @@ RSpec.describe User, type: :model do
   }
   let(:user) { FactoryBot.create(:user) }
 
-  specify "team" do
-    game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
-    expect(user.team(game)).to be(TOP)
-
-    game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
-    expect(user.team(game)).to be(BOTTOM)
-  end
-
-  describe "color" do
-    it "is always WHITE for a 2-player game" do
+  describe "team" do
+    it "is the user's team when they are part of the game" do
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
-      expect(user.color(game)).to be(WHITE)
+      expect(user.team(game)).to be(TOP)
 
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
-      expect(user.color(game)).to be(WHITE)
+      expect(user.team(game)).to be(BOTTOM)
     end
 
-    it "is the user's color for a 4-player game" do
+    it "is nil when the user is not playing in the game" do
+      game = Game.new
+      expect(user.team(game)).to be(nil)
+    end
+  end
+
+  describe "colors" do
+    it "is [WHITE, BLACK] for a 2-player game" do
+      game = Game.make!(creator: user, game_params: game_params)
+      expect(user.colors(game)).to be([WHITE, BLACK])
+    end
+
+    it "contains the user's color for a 4-player game" do
       game_params[:number_of_players] = 4
 
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
-      expect(user.color(game)).to be(WHITE)
+      expect(user.colors(game)).to be([WHITE])
 
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
-      expect(user.color(game)).to be(BLACK)
+      expect(user.colors(game)).to be([BLACK])
     end
   end
 end

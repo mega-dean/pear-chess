@@ -5,32 +5,30 @@ class User < ApplicationRecord
 
   validates :username, presence: true, uniqueness: true
 
+  def playing_in?(game)
+    !!self.team(game)
+  end
+
   def team(game)
-    team, _ = game.teams.find do |_, player_ids|
-      player_ids.include?(self.id)
+    ids = game.ids(self)
+
+    if ids.include?(:top_white) || ids.include?(:top_black)
+      TOP
+    elsif ids.include?(:bottom_white) || ids.include?(:bottom_black)
+      BOTTOM
+    end
+  end
+
+  def colors(game)
+    colors = []
+    ids = game.ids(self)
+
+    if ids.include?(:top_white) || ids.include?(:bottom_white)
+      colors << WHITE
     end
 
-    team
-  end
-
-  def playing_in?(game)
-    !!self.color(game)
-  end
-
-  def color(game)
-    if game.pairs.count == 1
-      if [game.pairs.first.white_player_id, game.pairs.first.black_player_id].include?(self.id)
-        # If the game is only 2-player, then each player plays as both white and black.
-        WHITE
-      end
-    else
-      game.pairs.each do |pair|
-        if pair.white_player_id == self.id
-          return WHITE
-        elsif pair.black_player_id == self.id
-          return BLACK
-        end
-      end
+    if ids.include?(:top_black) || ids.include?(:bottom_black)
+      colors << BLACK
     end
   end
 end

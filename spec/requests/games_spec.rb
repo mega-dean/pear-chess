@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Games", type: :request do
   describe "param validation when creating Game" do
+    let(:user) { FactoryBot.create(:user) }
     let(:game_params) {
       {
         number_of_players: 2,
@@ -14,7 +15,6 @@ RSpec.describe "Games", type: :request do
     }
 
     before do
-      user = FactoryBot.create(:user)
       sign_in(user)
     end
 
@@ -46,13 +46,12 @@ RSpec.describe "Games", type: :request do
       post games_path({ game: game_params })
 
       game = Game.sole!
-      user = User.sole!
 
       expect(Game.count).to be(1)
-      expect(game.pairs.count).to be(1)
       expect(game.board_size).to be(8)
       expect(game.turn_duration).to be(10)
-      expect(game.pairs.first.white_player_id).to be(user.id)
+      expect(game.top_white_player_id).to be(user.id)
+      expect(game.top_black_player_id).to be(user.id)
     end
   end
 end

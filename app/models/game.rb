@@ -6,6 +6,11 @@ class Game < ApplicationRecord
   validates :current_turn, presence: true
   validate :pairs_have_unique_players
 
+  belongs_to :top_white_player, class_name: "User", optional: true
+  belongs_to :top_black_player, class_name: "User", optional: true
+  belongs_to :bottom_white_player, class_name: "User", optional: true
+  belongs_to :bottom_black_player, class_name: "User", optional: true
+
   has_many :pairs, dependent: :destroy
 
   attribute :current_turn, default: 0
@@ -14,25 +19,30 @@ class Game < ApplicationRecord
 
   class << self
     def make!(creator:, game_params:)
-      game = Game.create!(game_params.slice(:board_size, :turn_duration))
-
-      pair_count = game_params[:number_of_players].to_i / 2
-      pair_count.times do |idx|
-        pair_params = if idx == 0
-          creator_color = if game_params[:play_as] == RANDOM
-            [WHITE, BLACK].sample
-          else
-            game_params[:play_as]
-          end
-          { "#{creator_color}_player_id" => creator.id }
-        else
-          {}
-        end
-
-        game.pairs.create!(pair_params)
+      creator_color = if game_params[:play_as] == RANDOM
+        [WHITE, BLACK].sample
+      else
+        game_params[:play_as]
       end
 
-      game
+      params = {
+        "board_size"                     => game_params[:board_size],
+        "turn_duration"                  => game_params[:turn_duration],
+        "top_#{creator_color}_player_id" => creator.id,
+      }
+
+      if game_params[:number_of_players].to_i == 2
+        opposite_color = {
+          WHITE => BLACK,
+          BLACK => WHITE,
+        }[creator_color]
+
+        params.merge!({
+          "top_#{opposite_color}_player_id" => creator.id,
+        })
+      end
+
+      Game.create!(params)
     end
 
     def valid_form_options
@@ -89,36 +99,24 @@ class Game < ApplicationRecord
     )
   end
 
-  # The two players in a Pair are across from each other diagonally on the board:
-  #
-  # +-----------------------------+
-  # |pair1,white       pair2,black|
-  # |            \   /            |
-  # |             \ /             |
-  # |              X              |
-  # |             / \             |
-  # |            /   \            |
-  # |pair2,white       pair1,black|
-  # +-----------------------------+
-  #
-  # "TOP" and "BOTTOM" are probably not the best team names, because when the game board is rendered, it is flipped
-  # vertically and horizontally so the current_user is always in the bottom-left corner.
-  def teams
-    top_players, bottom_players = {
-      1 => [
-        [self.pairs.first.white_player_id],
-        [self.pairs.first.black_player_id],
-      ],
-      2 => [
-        [self.pairs.first.white_player_id, self.pairs.last.black_player_id],
-        [self.pairs.first.black_player_id, self.pairs.last.white_player_id],
-      ],
-    }[self.pairs.count] || raise(NotSupportedYet, "can't have more than 2 pairs (got #{self.pairs.count})")
+  def ids(player)
+    [
+      (:top_white if top_white_player_id == player.id),
+      (:bottom_white if bottom_white_player_id == player.id),
+      (:top_black if top_black_player_id == player.id),
+      (:bottom_black if bottom_black_player_id == player.id),
+    ].compact
+  end
 
+  def teams
     {
-      TOP    => top_players.compact,
-      BOTTOM => bottom_players.compact,
+      TOP    => User.where(id: [top_white_player_id, top_black_player_id]),
+      BOTTOM => User.where(id: [bottom_white_player_id, bottom_black_player_id]),
     }
+  end
+
+  def players
+    User.where(id: [top_white_player, top_black_player, bottom_white_player, bottom_black_player])
   end
 
   def current_color

@@ -6,8 +6,7 @@ RSpec.describe "Moves", type: :request do
   let(:user) { FactoryBot.create(:user) }
 
   describe "create" do
-    let(:pair) { FactoryBot.create(:pair) }
-    let(:game) { pair.game }
+    let(:game) { FactoryBot.create(:game) }
     let(:move_params) {
       {
         move: {
@@ -32,7 +31,7 @@ RSpec.describe "Moves", type: :request do
     end
 
     it "creates a move when params are valid" do
-      pair.update!(white_player: user)
+      game.update!(top_white_player: user)
       post moves_path(move_params)
 
       expect(Move.count).to eq(1)

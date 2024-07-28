@@ -10,6 +10,11 @@ FactoryBot.define do
   factory :game do
     turn_duration { 10 }
     board_size { 8 }
+
+    association :top_white_player, factory: :user
+    association :top_black_player, factory: :user
+    association :bottom_white_player, factory: :user
+    association :bottom_black_player, factory: :user
   end
 
   factory :pair do

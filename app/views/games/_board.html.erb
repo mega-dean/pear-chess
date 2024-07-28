@@ -5,7 +5,7 @@
   squares = fen.to_squares
   current_team = current_user.team(game)
   current_color = game.current_color
-  user_color = current_user.color(game)
+  user_color = current_user.colors(game).first
   %>
   <%= current_team %>
   <div id="game-board"
