@@ -71,16 +71,11 @@ RSpec.describe Game, type: :model do
       expect(game.turn_duration).to eq(params[:turn_duration])
     end
 
-    it "creates pairs" do
-      expect(game.pairs.count).to be(2)
-    end
-
-    it "sets the creator to one of the pair players" do
-      expect(game.pairs.first.black_player_id).to be(user.id)
-      expect(game.pairs.first.white_player_id).to be(nil)
-
-      expect(game.pairs.last.black_player_id).to be(nil)
-      expect(game.pairs.last.white_player_id).to be(nil)
+    it "sets one of the top player_ids to the creator" do
+      expect(game.top_white_player_id).to be(nil)
+      expect(game.top_black_player_id).to be(user.id)
+      expect(game.bottom_white_player_id).to be(nil)
+      expect(game.bottom_black_player_id).to be(nil)
     end
   end
 
@@ -107,51 +102,42 @@ RSpec.describe Game, type: :model do
     let(:teammate) { FactoryBot.create(:user) }
     let(:opponent1) { FactoryBot.create(:user) }
     let(:opponent2) { FactoryBot.create(:user) }
-    let(:params) {
-      {
-        board_size: 8,
-        turn_duration: 15,
-        play_as: BLACK,
-      }
-    }
 
     it "returns two players for 2-player games" do
-      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 2))
-      game.pairs.sole!.update!(white_player: opponent1)
+      game = Game.new(
+        top_white_player: user,
+        top_black_player: user,
+        bottom_white_player: opponent1,
+        bottom_black_player: opponent1,
+      )
 
-      expect(game.reload.teams).to eq({
-        TOP    => [opponent1.id],
-        BOTTOM => [user.id],
+      expect(game.teams).to eq({
+        TOP    => [user],
+        BOTTOM => [opponent1],
       })
     end
 
     it "returns four players for 4-player games" do
-      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
-      game.pairs.first.update!(white_player: opponent1)
+      game = Game.new(
+        top_white_player: opponent1,
+        top_black_player: opponent2,
+        bottom_white_player: user,
+        bottom_black_player: teammate,
+      )
 
-      game.pairs.last.update!(white_player: teammate)
-      game.pairs.last.update!(black_player: opponent2)
-
-      expect(game.reload.teams).to eq({
-        TOP    => [opponent1.id, opponent2.id],
-        BOTTOM => [user.id, teammate.id],
+      expect(game.teams).to eq({
+        TOP    => [opponent1, opponent2],
+        BOTTOM => [user, teammate],
       })
     end
 
     it "returns empty lists when not all players have been set" do
-      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
+      game = Game.new(bottom_white_player: user)
 
-      expect(game.reload.teams).to eq({
+      expect(game.teams).to eq({
         TOP    => [],
-        BOTTOM => [user.id],
+        BOTTOM => [user],
       })
-    end
-
-    it "raises an error when there are too many pairs" do
-      game = Game.make!(creator: user, game_params: params.merge(number_of_players: 4))
-      game.pairs.create!
-
-      expect { game.reload.teams }.to raise_error(Game::NotSupportedYet)
     end
   end
 end

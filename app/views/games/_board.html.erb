@@ -41,9 +41,9 @@
                 "current-player"
               else
                 {
-                  1 => "current-player",
-                  2 => "current-teammate",
-                }[game.pairs.count] || raise(Game::NotSupportedYet, "invalid pair count #{game.pairs.count}")
+                  2 => "current-player",
+                  4 => "current-teammate",
+                }[game.players.count] || raise(Game::NotSupportedYet, "invalid player count #{game.players.count}")
               end
             else
               "enemy"

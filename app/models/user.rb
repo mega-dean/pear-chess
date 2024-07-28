@@ -30,5 +30,7 @@ class User < ApplicationRecord
     if ids.include?(:top_black) || ids.include?(:bottom_black)
       colors << BLACK
     end
+
+    colors
   end
 end

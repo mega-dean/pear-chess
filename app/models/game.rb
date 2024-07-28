@@ -109,14 +109,14 @@ class Game < ApplicationRecord
   end
 
   def teams
-    {
+    @teams ||= {
       TOP    => User.where(id: [top_white_player_id, top_black_player_id]),
       BOTTOM => User.where(id: [bottom_white_player_id, bottom_black_player_id]),
     }
   end
 
   def players
-    User.where(id: [top_white_player, top_black_player, bottom_white_player, bottom_black_player])
+    @players ||= User.where(id: [top_white_player, top_black_player, bottom_white_player, bottom_black_player])
   end
 
   def current_color

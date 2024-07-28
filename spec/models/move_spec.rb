@@ -18,7 +18,7 @@ RSpec.describe Move, type: :model do
     FactoryBot.create(:game,
       pieces: fen.to_s,
       current_turn: 1,
-      pairs: [FactoryBot.create(:pair, white_player: user)],
+      top_white_player: user,
     )
   }
 
@@ -50,8 +50,6 @@ RSpec.describe Move, type: :model do
       end
 
       it "is invalid when the piece at src belongs to their teammate" do
-        game.pairs << FactoryBot.create(:pair)
-
         expect {
           make_move!(2)
         }.to raise_error(ActiveRecord::RecordInvalid, /not the user's color/)
@@ -184,7 +182,7 @@ RSpec.describe Move, type: :model do
         idx = game.xy_to_idx(1, 1)
         fen = game.fen
 
-        fen.add_piece(user.team(game), user.color(game), piece_kind, idx)
+        fen.add_piece(user.team(game), user.colors(game).sole!, piece_kind, idx)
         game.update!(pieces: fen.to_s)
       end
 

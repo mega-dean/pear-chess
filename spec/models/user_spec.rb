@@ -14,10 +14,10 @@ RSpec.describe User, type: :model do
 
   describe "team" do
     it "is the user's team when they are part of the game" do
-      game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
+      game = Game.new(top_black_player: user)
       expect(user.team(game)).to be(TOP)
 
-      game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
+      game = Game.new(bottom_black_player: user)
       expect(user.team(game)).to be(BOTTOM)
     end
 
@@ -29,18 +29,18 @@ RSpec.describe User, type: :model do
 
   describe "colors" do
     it "is [WHITE, BLACK] for a 2-player game" do
-      game = Game.make!(creator: user, game_params: game_params)
-      expect(user.colors(game)).to be([WHITE, BLACK])
+      game = Game.new(bottom_white_player: user, bottom_black_player: user)
+      expect(user.colors(game)).to eq([WHITE, BLACK])
     end
 
     it "contains the user's color for a 4-player game" do
       game_params[:number_of_players] = 4
 
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: WHITE))
-      expect(user.colors(game)).to be([WHITE])
+      expect(user.colors(game)).to eq([WHITE])
 
       game = Game.make!(creator: user, game_params: game_params.merge(play_as: BLACK))
-      expect(user.colors(game)).to be([BLACK])
+      expect(user.colors(game)).to eq([BLACK])
     end
   end
 end

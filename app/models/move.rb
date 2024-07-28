@@ -50,7 +50,7 @@ class Move < ApplicationRecord
         errors.add(:src, "not the user's team")
       end
 
-      if self.game.pairs.count == 2
+      if self.game.players.count == 4
         if !self.user.colors(self.game).include?(color)
           errors.add(:src, "not the user's color")
         end
