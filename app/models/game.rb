@@ -17,34 +17,38 @@ class Game < ApplicationRecord
 
   attribute :current_turn, default: 0
 
+  scope :unstarted, -> { where(current_turn: 0) }
+  scope :started, -> { where("current_turn > 0") }
+
   class NotSupportedYet < StandardError; end
+  class MissingPlayAsParam < StandardError; end
+  class NotEnoughPlayers < StandardError; end
 
   class << self
     def make!(creator:, game_params:)
-      creator_color = if game_params[:play_as] == RANDOM
-        [WHITE, BLACK].sample
-      else
-        game_params[:play_as]
-      end
-
       params = {
-        "board_size"                     => game_params[:board_size],
-        "turn_duration"                  => game_params[:turn_duration],
-        "top_#{creator_color}_player_id" => creator.id,
+        board_size: game_params[:board_size],
+        turn_duration: game_params[:turn_duration],
       }
 
-      if game_params[:number_of_players].to_i == 2
-        opposite_color = {
-          WHITE => BLACK,
-          BLACK => WHITE,
-        }[creator_color]
+      player_ids = if game_params[:number_of_players].to_i == 2
+        {
+          top_white_player_id: creator.id,
+          top_black_player_id: creator.id,
+        }
+      else
+        creator_color = if game_params[:play_as] == RANDOM
+          [WHITE, BLACK].sample
+        else
+          game_params[:play_as] || raise(MissingPlayAsParam)
+        end
 
-        params.merge!({
-          "top_#{opposite_color}_player_id" => creator.id,
-        })
+        {
+          :"top_#{creator_color}_player_id" => creator.id,
+        }
       end
 
-      Game.create!(params)
+      Game.create!(params.merge(player_ids))
     end
 
     def valid_form_options
@@ -95,10 +99,20 @@ class Game < ApplicationRecord
   end
 
   def start!
-    self.update!(
-      current_turn: 1,
-      pieces: self.initial_pieces,
-    )
+    if top_white_player_id && top_black_player_id && bottom_white_player_id && bottom_black_player_id
+      self.update!(
+        current_turn: 1,
+        pieces: self.initial_pieces,
+      )
+    else
+      missing_players = [
+        (:top_white if top_white_player_id.nil?),
+        (:bottom_white if bottom_white_player_id.nil?),
+        (:top_black if top_black_player_id.nil?),
+        (:bottom_black if bottom_black_player_id.nil?),
+      ].compact.join(", ")
+      raise(NotEnoughPlayers, "#{missing_players} need to be set")
+    end
   end
 
   def ids(player)

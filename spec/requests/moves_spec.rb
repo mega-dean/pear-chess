@@ -6,7 +6,7 @@ RSpec.describe "Moves", type: :request do
   let(:user) { FactoryBot.create(:user) }
 
   describe "create" do
-    let(:game) { FactoryBot.create(:game) }
+    let(:game) { FactoryBot.create(:four_player_game) }
     let(:move_params) {
       {
         move: {

@@ -25,8 +25,7 @@ class GamesController < ApplicationController
   end
 
   def homepage
-    @new_game = Game.new
-    @games = Game.where(current_turn: 0)
+    @games = Game.unstarted
   end
 
   private

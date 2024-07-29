@@ -11,12 +11,20 @@ FactoryBot.define do
     turn_duration { Game::VALID_TURN_DURATIONS.first }
     board_size { Game::VALID_BOARD_SIZES.first }
 
-    association :top_white_player, factory: :user
-    association :top_black_player, factory: :user
-    association :bottom_white_player, factory: :user
-    association :bottom_black_player, factory: :user
-  end
+    factory :two_player_game do
+      association :top_white_player, factory: :user
+      top_black_player { top_white_player }
+      association :bottom_white_player, factory: :user
+      bottom_black_player { bottom_white_player }
+    end
 
+    factory :four_player_game do
+      association :top_white_player, factory: :user
+      association :top_black_player, factory: :user
+      association :bottom_white_player, factory: :user
+      association :bottom_black_player, factory: :user
+    end
+  end
 
   factory :move do
     association :game

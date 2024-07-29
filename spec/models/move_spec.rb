@@ -49,12 +49,6 @@ RSpec.describe Move, type: :model do
         }.to raise_error(ActiveRecord::RecordInvalid, /not the user's team/)
       end
 
-      it "is invalid when the piece at src belongs to their teammate" do
-        expect {
-          make_move!(2)
-        }.to raise_error(ActiveRecord::RecordInvalid, /not the user's color/)
-      end
-
       it "is invalid it is not the player's turn" do
         game.update!(current_turn: 2)
 
@@ -67,6 +61,22 @@ RSpec.describe Move, type: :model do
         expect {
           make_move!(7)
         }.to raise_error(ActiveRecord::RecordInvalid, /no piece at/)
+      end
+
+      context "4-player game" do
+        let!(:game) {
+          FactoryBot.create(:four_player_game,
+            pieces: fen.to_s,
+            current_turn: 1,
+            top_white_player: user,
+          )
+        }
+
+        it "is invalid when the piece at src belongs to their teammate" do
+          expect {
+            make_move!(2)
+          }.to raise_error(ActiveRecord::RecordInvalid, /not the user's color/)
+        end
       end
     end
 

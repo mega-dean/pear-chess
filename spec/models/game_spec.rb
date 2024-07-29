@@ -75,25 +75,51 @@ RSpec.describe Game, type: :model do
     let(:user) { FactoryBot.create(:user) }
     let(:params) {
       {
-        number_of_players: 4,
+        number_of_players: number_of_players,
         board_size: 8,
         turn_duration: 15,
-        play_as: BLACK,
+        play_as: play_as,
       }
     }
-
     let(:game) { Game.make!(creator: user, game_params: params) }
 
-    it "creates a game with the given params" do
-      expect(game.board_size).to eq(params[:board_size])
-      expect(game.turn_duration).to eq(params[:turn_duration])
+    context "2-player game" do
+      let(:number_of_players) { 2 }
+      let(:play_as) { nil }
+
+      it "creates a game with the given params" do
+        expect(game.board_size).to eq(params[:board_size])
+        expect(game.turn_duration).to eq(params[:turn_duration])
+      end
+
+      it "sets both of the top player_ids to the creator" do
+        expect(game.top_white_player_id).to be(user.id)
+        expect(game.top_black_player_id).to be(user.id)
+        expect(game.bottom_white_player_id).to be(nil)
+        expect(game.bottom_black_player_id).to be(nil)
+      end
     end
 
-    it "sets one of the top player_ids to the creator" do
-      expect(game.top_white_player_id).to be(nil)
-      expect(game.top_black_player_id).to be(user.id)
-      expect(game.bottom_white_player_id).to be(nil)
-      expect(game.bottom_black_player_id).to be(nil)
+    context "4-player game" do
+      let(:number_of_players) { 4 }
+      let(:play_as) { BLACK }
+
+      it "creates a game with the given params" do
+        expect(game.board_size).to eq(params[:board_size])
+        expect(game.turn_duration).to eq(params[:turn_duration])
+      end
+
+      it "sets the top player_id to the creator from the :play_as param" do
+        expect(game.top_white_player_id).to be(nil)
+        expect(game.top_black_player_id).to be(user.id)
+        expect(game.bottom_white_player_id).to be(nil)
+        expect(game.bottom_black_player_id).to be(nil)
+      end
+
+      it "requires a :play_as param" do
+        params[:play_as] = nil
+        expect { game }.to raise_error(Game::MissingPlayAsParam)
+      end
     end
   end
 
@@ -112,6 +138,25 @@ RSpec.describe Game, type: :model do
     it "is BLACK when the current_turn is even" do
       game.update!(current_turn: 10)
       expect(game.current_color).to be(BLACK)
+    end
+  end
+
+  describe "start!" do
+    let(:game) { FactoryBot.create(:two_player_game) }
+
+    it "sets the initial pieces and sets the current_turn to 1" do
+      expect {
+        game.start!
+      }.to change { game.pieces }.from(nil).to(game.initial_pieces)
+        .and change { game.current_turn }.from(0).to(1)
+    end
+
+    it "raises an error if not all players are set" do
+      game.update!(top_white_player: nil)
+
+      expect {
+        game.start!
+      }.to raise_error(Game::NotEnoughPlayers)
     end
   end
 
