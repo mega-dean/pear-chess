@@ -52,31 +52,28 @@ export default class extends Controller {
     const squareIsValidMove = () => square.classList.contains("target-move");
     const createMove = () => {
       const params = {
-        game_id: this.gameIdValue,
-        color: this.selectedPieceColorValue,
-        src_x: this.selectedPieceXValue,
-        src_y: this.selectedPieceYValue,
-        dest_x: squareX,
-        dest_y: squareY,
+        move: {
+          game_id: this.gameIdValue,
+          color: this.selectedPieceColorValue,
+          src_x: this.selectedPieceXValue,
+          src_y: this.selectedPieceYValue,
+          dest_x: squareX,
+          dest_y: squareY,
+        },
       };
+
       deselectPiece();
       utils.postJson("/moves", params);
     };
 
-    // TODO if a square is a valid target move and also has a piece, it should be interpreted as clicking the making
-    // the target move, not selecting the new piece
-    if (clickedSquareHasPiece()) {
+    if (parseInt(this.selectedPieceXValue) >= 0 && squareIsValidMove()) {
+      createMove();
+    } else if (clickedSquareHasPiece()) {
       if (clickedPieceIsAlreadySelected()) {
         deselectPiece();
       } else {
         if (clickedPieceBelongsToPlayer() && clickedPieceIsCurrentColor()) {
           selectClickedPiece();
-        }
-      }
-    } else {
-      if (this.selectedPieceXValue) {
-        if (squareIsValidMove()) {
-          createMove();
         }
       }
     }

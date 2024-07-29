@@ -37,10 +37,12 @@ class Game < ApplicationRecord
           top_black_player_id: creator.id,
         }
       else
-        creator_color = if game_params[:play_as] == RANDOM
+        creator_color = if game_params[:play_as].nil?
+          raise(MissingPlayAsParam)
+        elsif game_params[:play_as] == RANDOM
           [WHITE, BLACK].sample
         else
-          game_params[:play_as] || raise(MissingPlayAsParam)
+          game_params[:play_as]
         end
 
         {

@@ -11,6 +11,7 @@
   else
     current_user.colors(game).first
   end
+  player_count = game.players.count
   %>
   <div id="game-board"
        data-controller="game"
@@ -48,7 +49,7 @@
                 {
                   2 => "current-player",
                   4 => "current-teammate",
-                }[game.players.count] || raise(Game::NotSupportedYet, "invalid player count #{game.players.count}")
+                }[player_count] || raise(Game::NotSupportedYet, "invalid player count #{game.players.count}")
               end
             else
               "enemy"
