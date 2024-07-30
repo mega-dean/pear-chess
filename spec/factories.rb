@@ -16,6 +16,10 @@ FactoryBot.define do
       top_black_player { top_white_player }
       association :bottom_white_player, factory: :user
       bottom_black_player { bottom_white_player }
+
+      factory :started_game do
+        current_turn { 1 }
+      end
     end
 
     factory :four_player_game do

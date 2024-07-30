@@ -37,26 +37,120 @@ class Move < ApplicationRecord
     end
   end
 
+  def get_intermediate_steps
+    steps = if [KING, KNIGHT].include?(self.piece_kind)
+      [self.dest]
+    else
+      self.get_linear_intermediate_steps
+    end
+
+    self.intermediate_step_count.times do |idx|
+      if !steps[idx]
+        steps[idx] = steps[idx - 1]
+      end
+    end
+
+    steps
+  end
+
+  def team
+    @team ||= begin
+      self.get_piece
+      @team
+    end
+  end
+
+  def color
+    @color ||= begin
+      self.get_piece
+      @color
+    end
+  end
+
+  def piece_kind
+    @piece_kind ||= begin
+      self.get_piece
+      @piece_kind
+    end
+  end
+
+  def intermediate_step_count
+    game.board_size
+  end
+
   private
+
+  def get_linear_intermediate_steps
+    src_x, src_y = game.idx_to_xy(src)
+    dest_x, dest_y = game.idx_to_xy(dest)
+
+    dx = dest_x - src_x
+    dy = dest_y - src_y
+
+    direction = if dx == 0
+      if dy > 0
+        :down
+      else
+        :up
+      end
+    elsif dy == 0
+      if dx > 0
+        :right
+      else
+        :left
+      end
+    else
+      if dx > 0 && dy > 0
+        :down_right
+      elsif dx > 0 && dy < 0
+        :up_right
+      elsif dx < 0 && dy > 0
+        :down_left
+      elsif dx < 0 && dy < 0
+        :up_left
+      end
+    end
+
+    delta = {
+      up_left: -game.board_size - 1,
+      up: -game.board_size,
+      up_right: -game.board_size + 1,
+      left: -1,
+      right: 1,
+      down_left: game.board_size - 1,
+      down: game.board_size,
+      down_right: game.board_size + 1,
+    }[direction]
+
+    intermediate_squares = []
+    current_square = src
+
+    while current_square != dest
+      current_square += delta
+      intermediate_squares << current_square
+    end
+
+    intermediate_squares << dest
+    intermediate_squares
+  end
 
   def src_is_valid_piece
     src_x, src_y = self.src_xy
-    team, color, _ = self.get_piece
 
-    if !team
+    if !self.team
       errors.add(:src, "no piece at (#{src_x}, #{src_y})")
     else
-      if team != self.user.team(self.game)
+      if self.team != self.user.team(self.game)
         errors.add(:src, "not the user's team")
       end
 
       if self.game.players.count == 4
-        if !self.user.colors(self.game).include?(color)
+        if !self.user.colors(self.game).include?(self.color)
           errors.add(:src, "not the user's color")
         end
       end
 
-      if color != self.game.current_color
+      if self.color != self.game.current_color
         errors.add(:src, "not the user's turn")
       end
     end
@@ -135,15 +229,13 @@ class Move < ApplicationRecord
   end
 
   def dest_is_valid_target
-    _, _, piece_kind = self.get_piece
-
     valid_target_squares = {
       KNIGHT => -> { self.get_knight_targets },
       ROOK   => -> { self.get_rook_targets },
       BISHOP => -> { self.get_bishop_targets },
       QUEEN  => -> { self.get_rook_targets + self.get_bishop_targets },
       KING   => -> { self.get_king_targets },
-    }[piece_kind]&.call() || []
+    }[self.piece_kind]&.call() || []
 
     target_squares_on_board = valid_target_squares.filter do |square|
       x, y = self.game.idx_to_xy(square)
@@ -151,7 +243,7 @@ class Move < ApplicationRecord
     end
 
     if !target_squares_on_board.include?(self.dest)
-      errors.add(:dest, "not a valid target square for a #{piece_kind}")
+      errors.add(:dest, "not a valid target square for a #{self.piece_kind}")
     end
   end
 
@@ -163,6 +255,10 @@ class Move < ApplicationRecord
     src_x, src_y = self.src_xy
     fen = self.game.fen
 
-    fen.get_piece_at(src_x, src_y)
+    team, color, piece_kind = fen.get_piece_at(src_x, src_y)
+
+    @team = team
+    @color = color
+    @piece_kind = piece_kind
   end
 end

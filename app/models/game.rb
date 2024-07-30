@@ -20,6 +20,8 @@ class Game < ApplicationRecord
   scope :unstarted, -> { where(current_turn: 0) }
   scope :started, -> { where("current_turn > 0") }
 
+  has_many :moves
+
   class NotSupportedYet < StandardError; end
   class MissingPlayAsParam < StandardError; end
   class NotEnoughPlayers < StandardError; end

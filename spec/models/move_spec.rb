@@ -285,4 +285,161 @@ RSpec.describe Move, type: :model do
         .to(3 * game.board_size)
     end
   end
+
+  describe "get_intermediate_steps" do
+    let(:x) { 5 }
+    let(:y) { 5 }
+    let(:board_size) { 10 }
+    let(:src) { xy_to_idx(x, y) }
+    let(:pieces) {
+      Fen.new(board_size).tap do |fen|
+        fen.add_piece(TOP, WHITE, piece_kind, src)
+      end
+    }
+    let(:game) { FactoryBot.create(:started_game, top_white_player: user, board_size: board_size, pieces: pieces) }
+    let(:move) { FactoryBot.create(:move, game: game, user: game.top_white_player, src: src, dest: dest) }
+
+    def xy_to_idx(x, y)
+      Game.new(board_size: board_size).xy_to_idx(x, y)
+    end
+
+    def expect_intermediate_steps(intermediate_steps, expected)
+      intermediate_steps.zip(expected).each do |actual_step, expected_step|
+        if expected_step
+          expect(actual_step).to eq(expected_step)
+        else
+          expect(actual_step).to eq(expected.last)
+        end
+      end
+    end
+
+    context "for a knight" do
+      let(:piece_kind) { KNIGHT }
+      let(:dest) { xy_to_idx(x + 1, y + 2) }
+
+      it "is the dest repeated board_size times" do
+        expect_intermediate_steps(move.get_intermediate_steps, [dest])
+      end
+    end
+
+    context "for a king" do
+      let(:piece_kind) { KING }
+      let(:dest) { xy_to_idx(x + 1, y + 1) }
+
+      it "is the dest repeated board_size times" do
+        expect_intermediate_steps(move.get_intermediate_steps, [dest])
+      end
+    end
+
+    context "for a linear piece" do
+      let(:piece_kind) { QUEEN }
+
+      context "moving right" do
+        let(:dest) { xy_to_idx(board_size - 1, y) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(6, y),
+            xy_to_idx(7, y),
+            xy_to_idx(8, y),
+            xy_to_idx(9, y),
+          ])
+        end
+      end
+
+      context "moving left" do
+        let(:dest) { xy_to_idx(0, y) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(4, y),
+            xy_to_idx(3, y),
+            xy_to_idx(2, y),
+            xy_to_idx(1, y),
+            xy_to_idx(0, y),
+          ])
+        end
+      end
+
+      context "moving up" do
+        let(:dest) { xy_to_idx(x, 0) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(x, 4),
+            xy_to_idx(x, 3),
+            xy_to_idx(x, 2),
+            xy_to_idx(x, 1),
+            xy_to_idx(x, 0),
+          ])
+        end
+      end
+
+      context "moving down" do
+        let(:dest) { xy_to_idx(x, board_size - 1) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(x, 6),
+            xy_to_idx(x, 7),
+            xy_to_idx(x, 8),
+            xy_to_idx(x, 9),
+          ])
+        end
+      end
+
+      context "moving up-left" do
+        let(:dest) { xy_to_idx(0, 0) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(4, 4),
+            xy_to_idx(3, 3),
+            xy_to_idx(2, 2),
+            xy_to_idx(1, 1),
+            xy_to_idx(0, 0),
+          ])
+        end
+      end
+
+      context "moving up-right" do
+        let(:dest) { xy_to_idx(board_size - 1, 1) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(6, 4),
+            xy_to_idx(7, 3),
+            xy_to_idx(8, 2),
+            xy_to_idx(9, 1),
+          ])
+        end
+      end
+
+      context "moving down-left" do
+        let(:dest) { xy_to_idx(1, board_size - 1) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(4, 6),
+            xy_to_idx(3, 7),
+            xy_to_idx(2, 8),
+            xy_to_idx(1, 9),
+          ])
+        end
+      end
+
+      context "moving down-right" do
+        let(:dest) { xy_to_idx(board_size - 1, board_size - 1) }
+
+        it "is the intermediate squares between src and dest" do
+          expect_intermediate_steps(move.get_intermediate_steps, [
+            xy_to_idx(6, 6),
+            xy_to_idx(7, 7),
+            xy_to_idx(8, 8),
+            xy_to_idx(9, 9),
+          ])
+        end
+      end
+    end
+  end
 end
