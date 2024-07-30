@@ -43,3 +43,4 @@ end
 
 require "pry"
 Rails.application.config.console = Pry
+Pry.commands.rename_command "step_", "step"

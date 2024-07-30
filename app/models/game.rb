@@ -157,6 +157,15 @@ class Game < ApplicationRecord
     (y * board_size) + x
   end
 
+  # TODO broadcast move steps
+  def broadcast_move_steps(steps)
+    puts "broadcasting move steps"
+  end
+
+  def current_moves
+    @current_moves ||= moves.where(turn: current_turn)
+  end
+
   private
 
   def player_cannot_be_on_opposite_teams
