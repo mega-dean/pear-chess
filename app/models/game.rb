@@ -74,7 +74,7 @@ class Game < ApplicationRecord
 
     if Rails.env.development?
       def dev_game_ids
-        []
+        [1]
       end
     end
   end

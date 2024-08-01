@@ -66,6 +66,7 @@
 
 img.piece {
     max-width: 100%;
+    transition: transform 0.25s ease;
 }
 
 .current-teammate {

@@ -21,20 +21,11 @@
   >
     <div id="board" class="board-<%= board_size %>">
       <% board_size.times do |rendered_y| %>
-        <%
-        y = {
-          TOP => (board_size - 1) - rendered_y,
-          BOTTOM => rendered_y,
-        }[current_team] || rendered_y
-        %>
+        <% y = if reflect_y then (board_size - 1) - rendered_y else rendered_y end %>
 
         <% board_size.times do |rendered_x| %>
           <%
-          x = {
-            WHITE => rendered_x,
-            BLACK => (board_size - 1) - rendered_x,
-          }[user_color] || rendered_x
-
+          x = if reflect_x then (board_size - 1) - rendered_x else rendered_x end
           span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
           team, color, piece_kind = fen.get_piece(squares[y][x])
           %>
