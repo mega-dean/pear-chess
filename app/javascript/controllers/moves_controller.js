@@ -4,14 +4,12 @@ import { utils } from "./utils"
 export default class extends Controller {
   static values = {
     moveSteps: Array,
-    unmovingPieces: Array,
     reflectX: Boolean,
     reflectY: Boolean,
     boardSize: Number,
   }
 
   connect() {
-    this.unmovingPieces = new Set(this.unmovingPieces);
 
     const stepWaitTime = 1000 / 3;
 
@@ -22,6 +20,10 @@ export default class extends Controller {
           if (moves.captured) {
             const piece = this.idxToXY(targetSquare);
             document.$(`.square-${piece.x}-${piece.y} img`)?.remove();
+
+            new Promise((resolve) => setTimeout(resolve, stepWaitTime / 2)).then(() => {
+              document.$(`.square-${piece.x}-${piece.y} img`)?.remove();
+            });
           }
 
           let movedPieces = (moves.moving || []).concat(moves.bumped || []);

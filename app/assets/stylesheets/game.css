@@ -35,6 +35,11 @@
     height: 4rem;
     width: 4rem;
     display: inline-block;
+    position: relative;
+}
+
+.square-idx {
+    display: inline-block;
 }
 
 .square.dark {
@@ -56,7 +61,6 @@
     background: #bbb;
     box-shadow: inset -2px -2px #222, inset 2px 2px #eee;
     margin: 0.6rem;
-    /* width: 100%; */
 }
 
 .selected-piece-control {
@@ -66,7 +70,11 @@
 
 img.piece {
     max-width: 100%;
+    height: auto;
+    position: absolute;
+    left: 0;
     transition: transform 0.25s ease;
+    z-index: 1;
 }
 
 .current-teammate {

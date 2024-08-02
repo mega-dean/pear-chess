@@ -56,6 +56,11 @@
                 data-square-x="<%= x %>"
                 data-square-y="<%= y %>"
           >
+            <% if Rails.env.development? %>
+              <div class="square-idx">
+                <%= (board_size * y) + x %>
+              </div>
+            <% end %>
             <% if color %>
               <%= image_tag("#{color}-#{piece_kind}.png",
                             class: "piece piece-#{x}-#{y} #{image_class}",

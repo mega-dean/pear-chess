@@ -17,11 +17,10 @@ reflect_y = current_user.team(@game) == TOP
   }) %>
 
   <%= turbo_stream_from("game_#{@game.id}_moves") %>
-  <%#= render partial: "games/moves", locals: { move_steps: nil, unmoving_pieces: nil } %>
+  <%#= render partial: "games/moves", locals: { move_steps: nil } %>
   <% move_steps, unmoving_pieces = ProcessMoves.new(@game).send(:get_move_steps) %>
   <%= render partial: "games/moves", locals: {
     move_steps: move_steps,
-    unmoving_pieces: unmoving_pieces,
     board_size: @game.board_size,
     reflect_x: reflect_x,
     reflect_y: reflect_y,

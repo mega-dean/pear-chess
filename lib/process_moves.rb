@@ -26,9 +26,11 @@ class ProcessMoves
 
   def get_move_steps
     steps = Array.new(self.game.board_size, nil)
-    bumped = Set.new
-    captured = Set.new
-    unmoving_pieces = Set.new
+    bumped_pieces = Set.new
+    captured_pieces = Set.new
+    capturing_pieces = Set.new
+    all_pieces = {}
+    unmoving_pieces = {}
 
     cache = {}
     fen_squares.each.with_index do |fen_row, fen_y|
@@ -37,7 +39,12 @@ class ProcessMoves
         team, color, piece_kind = fen.get_piece(fen_char)
 
         if team
-          if intermediate_steps = moves_by_src[src]&.get_intermediate_steps
+          all_pieces[src] = {
+            team: team,
+            color: color,
+            piece_kind: piece_kind,
+          }
+          if (intermediate_steps = moves_by_src[src]&.get_intermediate_steps)
             cache[src] = {
               team: team,
               color: color,
@@ -45,7 +52,11 @@ class ProcessMoves
               intermediate_steps: intermediate_steps,
             }
           else
-            unmoving_pieces.add(src)
+            unmoving_pieces[src] = {
+              team: team,
+              color: color,
+              piece_kind: piece_kind,
+            }
           end
         end
       end
@@ -56,31 +67,57 @@ class ProcessMoves
 
       # `piece_id` here is really "src that the piece started at this turn", since pieces don't really have an id.
       cache.each do |piece_id, cached|
-        current_square = if cached[:intermediate_steps]
-          cached[:intermediate_steps][step_idx]
+        if capturing_pieces.include?(piece_id)
+          # do nothing (ie. stop moving)
+        elsif bumped_pieces.include?(piece_id)
+          step[piece_id] ||= {}
+          step[piece_id].merge!({ bumped: piece_id })
         else
-          piece_id
-        end
+          current_square = if cached[:intermediate_steps]
+            cached[:intermediate_steps][step_idx]
+          else
+            piece_id
+          end
 
-        piece_state = if step_idx == 0
-          :moving
-        elsif current_square == cached[:intermediate_steps][step_idx - 1]
-          :moved
-        else
-          :moving
-        end
+          piece_state = if step_idx == 0
+            :moving
+          elsif current_square == cached[:intermediate_steps][step_idx - 1]
+            :moved
+          else
+            :moving
+          end
 
-        step[current_square] ||= {}
+          step[current_square] ||= {}
 
-        if piece_state == :moving
-          step[current_square][:moving] ||= []
-          step[current_square][:moving] << piece_id
-        else
-          step[current_square].merge!({ piece_state => piece_id })
-        end
+          if piece_state == :moving
+            step[current_square][:moving] ||= []
+            step[current_square][:moving] << piece_id
+          else
+            step[current_square].merge!({ piece_state => piece_id })
+          end
 
-        if step[current_square].count > 1 || (step[current_square][:moving] && step[current_square][:moving].count > 1)
-          # TODO handle captures and bumping
+          pieces_at_current_square_this_step = [
+            *step[current_square][:moving],
+            step[current_square][:moved],
+            step[current_square][:bumped],
+            (current_square if unmoving_pieces[current_square]),
+          ].compact
+
+          if pieces_at_current_square_this_step.count > 1
+            step[current_square][:moving]&.each do |moving_piece_id|
+              piece_id_already_here = (pieces_at_current_square_this_step - [moving_piece_id]).sole!
+
+              moving_piece = all_pieces[moving_piece_id]
+              piece_already_here = all_pieces[piece_id_already_here]
+              if moving_piece[:color] == piece_already_here[:color] || moving_piece[:team] == piece_already_here[:team]
+                bumped_pieces.add(moving_piece_id)
+              else
+                step[current_square][:captured] = piece_id_already_here
+                capturing_pieces.add(moving_piece_id)
+                captured_pieces.add(piece_id_already_here)
+              end
+            end
+          end
         end
       end
 
