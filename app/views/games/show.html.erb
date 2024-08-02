@@ -1,30 +1,19 @@
-<%
-user_color = if @game.players.count == 2
-  WHITE
-else
-  current_user.colors(@game).first
-end
-
-reflect_x = user_color != WHITE
-reflect_y = current_user.team(@game) == TOP
-%>
-
 <% if @game.current_turn > 0 %>
   <%= render(partial: "games/board", locals: {
     game: @game,
-    reflect_x: reflect_x,
-    reflect_y: reflect_y,
+    reflect_x: @game.reflect_x(current_user),
+    reflect_y: @game.reflect_y(current_user),
   }) %>
 
-  <%= turbo_stream_from("game_#{@game.id}_moves") %>
-  <%#= render partial: "games/moves", locals: { move_steps: nil } %>
-  <% move_steps, unmoving_pieces = ProcessMoves.new(@game).send(:get_move_steps) %>
+  <%= turbo_stream_from("game-#{@game.id}-moves") %>
   <%= render partial: "games/moves", locals: {
-    move_steps: move_steps,
+    move_steps: nil,
     board_size: @game.board_size,
-    reflect_x: reflect_x,
-    reflect_y: reflect_y,
+    reflect_x: @game.reflect_x(current_user),
+    reflect_y: @game.reflect_y(current_user),
   } %>
 <% else %>
   <p>(waiting for other players)</p>
 <% end %>
+
+<%= button_to("process moves", process_moves_path(@game.id)) %>

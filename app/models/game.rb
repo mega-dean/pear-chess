@@ -157,13 +157,45 @@ class Game < ApplicationRecord
     (y * board_size) + x
   end
 
-  # TODO broadcast move steps
-  def broadcast_move_steps(steps)
-    puts "broadcasting move steps"
+  def broadcast_move_steps(move_steps, player)
+    broadcast_replace_to(
+      "game-#{self.id}-moves",
+      target: "game-moves",
+      partial: "games/moves",
+      locals: {
+        move_steps: move_steps,
+        board_size: self.board_size,
+        reflect_x: self.reflect_x(player),
+        reflect_y: self.reflect_y(player),
+      },
+    )
   end
 
   def current_moves
     @current_moves ||= moves.where(turn: current_turn)
+  end
+
+  def reflect_x(player)
+    player_color = if self.players.count == 2
+      WHITE
+    else
+      player.colors(self).first
+    end
+
+    player_color != WHITE
+  end
+
+  def reflect_y(player)
+    player.team(self) == TOP
+  end
+
+  if Rails.env.development?
+    def reset!
+      self.update!(
+        current_turn: 1,
+        pieces: self.initial_pieces,
+      )
+    end
   end
 
   private

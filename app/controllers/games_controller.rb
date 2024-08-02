@@ -28,6 +28,15 @@ class GamesController < ApplicationController
     @games = Game.unstarted
   end
 
+  if Rails.env.development?
+    def process_moves
+      @game = Game.find(params[:id])
+      ProcessMoves.new(@game).run(current_user)
+
+      head :ok
+    end
+  end
+
   private
 
   def game_params

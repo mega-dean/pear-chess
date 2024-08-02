@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   if Rails.env.development?
     get "/fen_tool/:size" => "fen_tool#board", as: "fen_tool"
     post "/fen_tool_update" => "fen_tool#update"
+
+    post "/games/:id/process_moves" => "games#process_moves", as: "process_moves"
   end
 
   get "/sign_in" => "sessions#new", as: "sign_in"

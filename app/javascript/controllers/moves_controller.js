@@ -19,15 +19,14 @@ export default class extends Controller {
         for (let [targetSquare, moves] of Object.entries(moveStep)) {
           if (moves.captured) {
             const piece = this.idxToXY(targetSquare);
-            document.$(`.square-${piece.x}-${piece.y} img`)?.remove();
 
             new Promise((resolve) => setTimeout(resolve, stepWaitTime / 2)).then(() => {
               document.$(`.square-${piece.x}-${piece.y} img`)?.remove();
             });
           }
 
-          let movedPieces = (moves.moving || []).concat(moves.bumped || []);
-          movedPieces.forEach((pieceId) => {
+          let movingPieces = (moves.moving || []).concat(moves.bumped || []);
+          movingPieces.forEach((pieceId) => {
             this.movePieceTo(pieceId, parseInt(targetSquare));
           });
         }

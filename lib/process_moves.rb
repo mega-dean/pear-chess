@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProcessMoves
   attr_accessor :game, :moves_by_src, :fen, :fen_squares
 
@@ -12,12 +14,12 @@ class ProcessMoves
     end
   end
 
-  def run
+  def run(player)
     game.update!(processing_moves: true)
-    steps = self.get_move_steps
-    self.apply_move_steps(steps)
 
-    game.broadcast_move_steps(steps)
+    steps, captured_pieces, all_pieces = self.get_move_steps
+    self.apply_move_steps(steps, captured_pieces, all_pieces)
+    game.broadcast_move_steps(steps, player)
   ensure
     game.update!(processing_moves: false)
   end
@@ -28,7 +30,7 @@ class ProcessMoves
     steps = Array.new(self.game.board_size, nil)
     bumped_pieces = Set.new
     captured_pieces = Set.new
-    capturing_pieces = Set.new
+    capturing_pieces = {}
     all_pieces = {}
     unmoving_pieces = {}
 
@@ -62,13 +64,16 @@ class ProcessMoves
       end
     end
 
-    move_steps = game.board_size.times.map do |step_idx|
+    move_steps = []
+    game.board_size.times.each do |step_idx|
       step = {}
 
       # `piece_id` here is really "src that the piece started at this turn", since pieces don't really have an id.
       cache.each do |piece_id, cached|
-        if capturing_pieces.include?(piece_id)
+        if capturing_pieces[piece_id]
           # do nothing (ie. stop moving)
+          step[capturing_pieces[piece_id]] ||= {}
+          step[capturing_pieces[piece_id]].merge!({ moved: piece_id })
         elsif bumped_pieces.include?(piece_id)
           step[piece_id] ||= {}
           step[piece_id].merge!({ bumped: piece_id })
@@ -113,7 +118,7 @@ class ProcessMoves
                 bumped_pieces.add(moving_piece_id)
               else
                 step[current_square][:captured] = piece_id_already_here
-                capturing_pieces.add(moving_piece_id)
+                capturing_pieces[moving_piece_id] = current_square
                 captured_pieces.add(piece_id_already_here)
               end
             end
@@ -121,18 +126,29 @@ class ProcessMoves
         end
       end
 
-      step
+      move_steps << step
     end
 
-    [move_steps, unmoving_pieces]
+    [move_steps, captured_pieces, all_pieces]
   end
 
-  def apply_move_steps(steps)
-    # TODO get new fen
-    new_fen = game.pieces
+  def apply_move_steps(move_steps, captured_pieces, all_pieces)
+    new_fen = game.fen
+
+    captured_pieces.each do |square|
+      new_fen.remove_piece(square)
+    end
+
+    move_steps.last.each do |dest, step|
+      if (src = step[:moved])
+        piece = all_pieces[src]
+        new_fen.remove_piece(src)
+        new_fen.add_piece(piece[:team], piece[:color], piece[:piece_kind], dest)
+      end
+    end
 
     game.update!(
-      pieces: new_fen,
+      pieces: new_fen.to_s,
       current_turn: game.current_turn + 1,
     )
   end
