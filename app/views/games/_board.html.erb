@@ -3,37 +3,37 @@
   fen = game.fen
   board_size = game.board_size
   squares = fen.to_squares
+  reflect_x, reflect_y = get_reflection(game)
   current_team = current_user.team(game)
   current_color = game.current_color
-  # For 2-player games, treat the player as WHITE (ie. don't reflect x).
-  user_color = if game.players.count == 2
-    WHITE
-  else
-    current_user.colors(game).first
-  end
   player_count = game.players.count
+  pending_moves_by_src = {}
+  game.current_moves(current_user).each do |move|
+    pending_moves_by_src[move.src] = move
+  end
   %>
-  <div id="game-board"
-       data-controller="game"
-       data-game-board-size-value="<%= board_size %>"
-       data-game-game-id-value="<%= game.id %>"
-       data-game-current-color-value="<%= current_color %>"
-  >
-    <div id="board" class="board-<%= board_size %>">
-      <% board_size.times do |rendered_y| %>
-        <% y = if reflect_y then (board_size - 1) - rendered_y else rendered_y end %>
+  <%= turbo_frame_tag "game-#{game.id}-board" do %>
+    <%= form_with url: moves_path, data: {
+      controller: 'game',
+      game_board_size_value: board_size,
+      game_game_id_value: game.id,
+      game_current_color_value: current_color,
+    } do |form| %>
+      <div id="board" class="board-<%= board_size %>">
+        <% board_size.times do |rendered_y| %>
+          <% y = if reflect_y then (board_size - 1) - rendered_y else rendered_y end %>
 
-        <% board_size.times do |rendered_x| %>
-          <%
-          x = if reflect_x then (board_size - 1) - rendered_x else rendered_x end
-          span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
-          team, color, piece_kind = fen.get_piece(squares[y][x])
-          %>
+          <% board_size.times do |rendered_x| %>
+            <%
+            x = if reflect_x then (board_size - 1) - rendered_x else rendered_x end
+            span_class = "#{y%2 == x%2 ? 'light' : 'dark'}"
+            team, color, piece_kind = fen.get_piece(squares[y][x])
+            %>
 
-          <%
-          # TODO when viewing a game as a non-player, all pieces look like enemies
-          if color
-            image_class = if team == current_team
+            <%
+            # TODO when viewing a game as a non-player, all pieces look like enemies
+            if color
+              image_class = if team == current_team
               if color == current_color
                 "current-player"
               else
@@ -45,30 +45,41 @@
             else
               "enemy"
             end
-          end
-          %>
+            end
+            %>
+            <% idx = game.xy_to_idx(x, y) %>
 
-          <span class="square square-<%= "#{x}-#{y}" %> <%= span_class %>"
-                data-action="click->game#selectSquare"
-                data-color="<%= color %>"
-                data-piece-kind="<%= piece_kind %>"
-                data-image-class="<%= image_class %>"
-                data-square-x="<%= x %>"
-                data-square-y="<%= y %>"
-          >
-            <% if Rails.env.development? %>
-              <div class="square-idx">
-                <%= (board_size * y) + x %>
-              </div>
-            <% end %>
-            <% if color %>
-              <%= image_tag("#{color}-#{piece_kind}.png",
-                            class: "piece piece-#{x}-#{y} #{image_class}",
-              ) %>
-            <% end %>
-          </span>
+            <span class="square square-<%= "#{x}-#{y}" %> <%= span_class %>"
+                  data-action="click->game#selectSquare"
+                  data-color="<%= color %>"
+                  data-piece-kind="<%= piece_kind %>"
+                  data-image-class="<%= image_class %>"
+                  data-square-x="<%= x %>"
+                  data-square-y="<%= y %>"
+                  data-square-idx="<%= idx %>"
+            >
+              <% if Rails.env.development? %>
+                <% style = if pending_moves_by_src[idx] then "color: red" else "" end %>
+                <div class="square-idx" style="<%= style %>">
+                  <%= idx %>
+                </div>
+              <% end %>
+              <% if color %>
+                <%= image_tag("#{color}-#{piece_kind}.png",
+                              class: "piece piece-#{x}-#{y} #{image_class}",
+                ) %>
+              <% end %>
+            </span>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
-  </div>
+      </div>
+
+      <%= form.hidden_field "move[game_id]", value: game.id %>
+      <%= form.hidden_field "move[color]", value: current_color %>
+      <%= form.hidden_field "move[src_idx]", id: "src-idx-input" %>
+      <%= form.hidden_field "move[dest_idx]", id: "dest-idx-input" %>
+
+      <%= form.submit %>
+    <% end %>
+  <% end %>
 </div>

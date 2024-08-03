@@ -14,12 +14,12 @@ class ProcessMoves
     end
   end
 
-  def run(player)
+  def run
     game.update!(processing_moves: true)
 
     steps, captured_pieces, all_pieces = self.get_move_steps
     self.apply_move_steps(steps, captured_pieces, all_pieces)
-    game.broadcast_move_steps(steps, player)
+    game.broadcast_move_steps(steps)
   ensure
     game.update!(processing_moves: false)
   end
@@ -71,7 +71,6 @@ class ProcessMoves
       # `piece_id` here is really "src that the piece started at this turn", since pieces don't really have an id.
       cache.each do |piece_id, cached|
         if capturing_pieces[piece_id]
-          # do nothing (ie. stop moving)
           step[capturing_pieces[piece_id]] ||= {}
           step[capturing_pieces[piece_id]].merge!({ moved: piece_id })
         elsif bumped_pieces.include?(piece_id)

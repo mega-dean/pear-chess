@@ -8,7 +8,7 @@ class MovesController < ApplicationController
       Move.make!(
         game: game,
         user: current_user,
-        params: move_params.slice(:src_x, :src_y, :dest_x, :dest_y),
+        params: move_params.slice(:src_idx, :dest_idx),
       )
     end
 
@@ -21,12 +21,13 @@ class MovesController < ApplicationController
     # raise an error from Move validations, so the response would be non-200. The third one can probably happen to users
     # with unlucky timing: they submit the move right before the deadline, but it arrives at the server right after the
     # deadline. But there's no reason to show an error message in that case since they won't ever see a pending move.
-    head :ok
+    @game = game
+    render "games/show"
   end
 
   private
 
   def move_params
-    params.require(:move).permit(:game_id, :color, :src_x, :src_y, :dest_x, :dest_y)
+    params.require(:move).permit(:game_id, :color, :src_idx, :dest_idx)
   end
 end

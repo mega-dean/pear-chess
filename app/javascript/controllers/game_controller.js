@@ -3,37 +3,38 @@ import { utils } from "./utils"
 
 export default class extends Controller {
   static values = {
+    selectedPieceIdx: Number,
     selectedPieceX: Number,
     selectedPieceY: Number,
-    selectedPieceColor: String,
     currentColor: String,
     boardSize: Number,
-    gameId: Number,
   };
 
   connect() {
     // Numbers default to 0, so this prevents the game from thinking the piece at (0,0) is selected.
     this.selectedPieceXValue = null;
     this.selectedPieceYValue = null;
+    this.selectedPieceIdxValue = null;
   }
 
   selectSquare(event) {
     const square = event.currentTarget;
     const dataset = square.dataset;
-    const squareX = parseInt(dataset.squareX);
-    const squareY = parseInt(dataset.squareY);
+
+    const clickedX = parseInt(dataset.squareX);
+    const clickedY = parseInt(dataset.squareY);
+    const clickedIdx = parseInt(dataset.squareIdx);
 
     const clickedSquareHasPiece = () => dataset.color.length > 0;
 
     const clickedPieceIsAlreadySelected = () => {
-      return this.selectedPieceXValue === squareX &&
-             this.selectedPieceYValue === squareY;
+      return clickedIdx === this.selectedPieceIdxValue;
     };
 
     const deselectPiece = () => {
+      this.selectedPieceIdxValue = null;
       this.selectedPieceXValue = null;
       this.selectedPieceYValue = null;
-      this.selectedPieceColorValue = null;
 
       this.removeTargets();
     };
@@ -42,31 +43,25 @@ export default class extends Controller {
     const clickedPieceIsCurrentColor = () => dataset.color === this.currentColorValue;
 
     const selectClickedPiece = () => {
-      this.selectedPieceXValue = squareX;
-      this.selectedPieceYValue = squareY;
-      this.selectedPieceColorValue = dataset.color;
+      this.selectedPieceIdxValue = clickedIdx;
+      this.selectedPieceXValue = clickedX;
+      this.selectedPieceYValue = clickedY;
 
       this.setTargetMoves(dataset.pieceKind);
     };
 
     const squareIsValidMove = () => square.classList.contains("target-move");
     const createMove = () => {
-      const params = {
-        move: {
-          game_id: this.gameIdValue,
-          color: this.selectedPieceColorValue,
-          src_x: this.selectedPieceXValue,
-          src_y: this.selectedPieceYValue,
-          dest_x: squareX,
-          dest_y: squareY,
-        },
-      };
+      document.$("#src-idx-input").value = this.selectedPieceIdxValue;
+      document.$("#dest-idx-input").value = clickedIdx;
+      this.element.requestSubmit();
+      document.$("#dest-idx-input").value = null;
+      document.$("#src-idx-input").value = null;
 
       deselectPiece();
-      utils.postJson("/moves", params);
     };
 
-    if (parseInt(this.selectedPieceXValue) >= 0 && squareIsValidMove()) {
+    if (parseInt(this.selectedPieceIdxValue) >= 0 && squareIsValidMove()) {
       createMove();
     } else if (clickedSquareHasPiece()) {
       if (clickedPieceIsAlreadySelected()) {

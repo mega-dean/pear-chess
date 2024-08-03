@@ -1,10 +1,12 @@
 <div id="game-moves">
   <% if move_steps %>
+    <% reflect_x, reflect_y = get_reflection(game) %>
+
     <div data-controller="moves"
          data-moves-move-steps-value="<%= move_steps.to_json %>"
          data-moves-reflect-x-value="<%= reflect_x %>"
          data-moves-reflect-y-value="<%= reflect_y %>"
-         data-moves-board-size-value="<%= board_size %>"
+         data-moves-board-size-value="<%= game.board_size %>"
     >
     </div>
   <% end %>

@@ -13,25 +13,22 @@ class Move < ApplicationRecord
 
   class << self
     def make!(game:, user:, params:)
-      src_idx = game.xy_to_idx(params[:src_x].to_i, params[:src_y].to_i)
-      dest_idx = game.xy_to_idx(params[:dest_x].to_i, params[:dest_y].to_i)
-
       existing_move = Move.find_by(
         game: game,
         turn: game.current_turn,
         user: user,
-        src: src_idx,
+        src: params[:src_idx],
       )
 
       if existing_move
-        existing_move.update!(dest: dest_idx)
+        existing_move.update!(dest: params[:dest_idx])
       else
         Move.create!(
           game: game,
           turn: game.current_turn,
           user: user,
-          src: src_idx,
-          dest: dest_idx,
+          src: params[:src_idx],
+          dest: params[:dest_idx],
         )
       end
     end

@@ -10,7 +10,6 @@ export default class extends Controller {
   }
 
   connect() {
-
     const stepWaitTime = 1000 / 3;
 
     this.moveStepsValue.forEach((moveStep, idx) => {

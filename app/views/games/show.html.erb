@@ -1,16 +1,14 @@
 <% if @game.current_turn > 0 %>
   <%= render(partial: "games/board", locals: {
     game: @game,
-    reflect_x: @game.reflect_x(current_user),
-    reflect_y: @game.reflect_y(current_user),
+    player: current_user,
   }) %>
 
   <%= turbo_stream_from("game-#{@game.id}-moves") %>
   <%= render partial: "games/moves", locals: {
+    game: @game,
+    player: current_user,
     move_steps: nil,
-    board_size: @game.board_size,
-    reflect_x: @game.reflect_x(current_user),
-    reflect_y: @game.reflect_y(current_user),
   } %>
 <% else %>
   <p>(waiting for other players)</p>
