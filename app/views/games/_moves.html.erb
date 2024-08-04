@@ -1,6 +1,6 @@
-<div id="game-moves">
+<div id=<%= "game-#{player.id}-moves" %>>
   <% if move_steps %>
-    <% reflect_x, reflect_y = get_reflection(game) %>
+    <% reflect_x, reflect_y = get_reflection(game, player) %>
 
     <div data-controller="moves"
          data-moves-move-steps-value="<%= move_steps.to_json %>"

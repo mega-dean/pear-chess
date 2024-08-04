@@ -14,7 +14,6 @@ export default class extends Controller {
 
     this.moveStepsValue.forEach((moveStep, idx) => {
       new Promise((resolve) => setTimeout(resolve, idx * stepWaitTime)).then(() => {
-        console.log(moveStep);
         for (let [targetSquare, moves] of Object.entries(moveStep)) {
           if (moves.captured) {
             const piece = this.idxToXY(targetSquare);
@@ -58,14 +57,15 @@ export default class extends Controller {
   }
 
   getTranslateCoords(src, dest) {
-    const relativeDest = this.idxToXY(dest - src);
+    const srcXY = this.idxToXY(src);
+    const destXY = this.idxToXY(dest);
 
     const xMult = this.reflectXValue ? -1 : 1;
     const yMult = this.reflectYValue ? -1 : 1;
 
     return {
-      x: xMult * utils.squareRem * relativeDest.x,
-      y: yMult * utils.squareRem * relativeDest.y,
+      x: xMult * utils.squareRem * (destXY.x - srcXY.x),
+      y: yMult * utils.squareRem * (destXY.y - srcXY.y),
     };
   }
 }

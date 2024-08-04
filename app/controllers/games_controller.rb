@@ -31,7 +31,7 @@ class GamesController < ApplicationController
   if Rails.env.development?
     def process_moves
       @game = Game.find(params[:id])
-      ProcessMoves.new(@game).run(current_user)
+      ProcessMoves.new(@game).run
 
       head :ok
     end

@@ -3,12 +3,12 @@
   fen = game.fen
   board_size = game.board_size
   squares = fen.to_squares
-  reflect_x, reflect_y = get_reflection(game)
-  current_team = current_user.team(game)
+  reflect_x, reflect_y = get_reflection(game, player)
+  current_team = player.team(game)
   current_color = game.current_color
   player_count = game.players.count
   pending_moves_by_src = {}
-  game.current_moves(current_user).each do |move|
+  game.current_moves(player).each do |move|
     pending_moves_by_src[move.src] = move
   end
   %>
