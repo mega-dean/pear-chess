@@ -29,6 +29,7 @@ export default class extends Controller {
           });
         }
       });
+      [...document.$$('.pending-move')].forEach((node) => node.remove());
     });
 
   }

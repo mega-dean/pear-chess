@@ -34,17 +34,17 @@
             # TODO when viewing a game as a non-player, all pieces look like enemies
             if color
               image_class = if team == current_team
-              if color == current_color
-                "current-player"
+                if color == current_color
+                  "current-player"
+                else
+                  {
+                    2 => "current-player",
+                    4 => "current-teammate",
+                  }[player_count] || raise(Game::NotSupportedYet, "invalid player count #{game.players.count}")
+                end
               else
-                {
-                  2 => "current-player",
-                  4 => "current-teammate",
-                }[player_count] || raise(Game::NotSupportedYet, "invalid player count #{game.players.count}")
+                "enemy"
               end
-            else
-              "enemy"
-            end
             end
             %>
             <% idx = game.xy_to_idx(x, y) %>
@@ -80,5 +80,16 @@
 
       <%= form.submit %>
     <% end %>
+
+    <div id="pending-moves">
+      <% pending_moves_by_src.each do |src, move| %>
+        <div>
+          <%= "#{src} to #{move.dest}" %>
+          <div class="pending-move"
+               style="<%= get_pending_move_line(game, move, reflect_x, reflect_y) %>"
+          ></div>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>

@@ -101,3 +101,15 @@ img.selected-piece {
 .square.target-move.light {
     background: rgb(150, 100, 150);
 }
+
+#board-container {
+    position: relative;
+}
+
+.pending-move {
+    position: absolute;
+    height: 0.1rem;
+    background-color: rgba(12, 123, 220, 0.5);
+    transform-origin: 0 50%;
+    z-index: 2;
+}
