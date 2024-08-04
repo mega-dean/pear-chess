@@ -65,9 +65,8 @@
                 </div>
               <% end %>
               <% if color %>
-                <%= image_tag("#{color}-#{piece_kind}.png",
-                              class: "piece piece-#{x}-#{y} #{image_class}",
-                ) %>
+                <% image_src = "#{if image_class == 'enemy' then 'enemy-' end}#{color}-#{piece_kind}.png" %>
+                <%= image_tag(image_src, class: "piece piece-#{x}-#{y} #{image_class}") %>
               <% end %>
             </span>
           <% end %>
